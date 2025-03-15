@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Datos</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="javascript/script.js"></script>
+</head>
+<body>
+    <h2>Gestión de Datos</h2>
+    
+    <label for="accion">Selecciona una acción:</label>
+    <select id="accion" onchange="mostrarOpciones()">
+        <option value="">-- Seleccionar --</option>
+        <option value="insertar">Insertar</option>
+        <option value="actualizar">Actualizar</option>
+        <option value="eliminar">Eliminar</option>
+    </select>
+
+    <div id="opciones" style="display:none;">
+        <label for="tabla">Selecciona una tabla:</label>
+        <select id="tabla" onchange="mostrarFormulario()">
+            <option value="">-- Seleccionar --</option>
+            <option value="especies">Especies</option>
+            <option value="animales">Animales</option>
+            <option value="plantas">Plantas</option>
+            <option value="produccion">Producción</option>
+            <option value="alimentacion">Alimentación</option>
+            <option value="empleados">Empleados</option>
+            <option value="proveedores">Proveedores</option>
+            <option value="inventario">Inventario</option>
+            <option value="reportes">Reportes</option>
+            <option value="vacunas">Vacunas</option>
+        </select>
+    </div>
+
+    <form id="formulario" action="conexion/procedimientos.php" method="POST" style="display:none;">
+        <input type="hidden" id="accionForm" name="accion">
+        <input type="hidden" id="tablaForm" name="tabla">
+        <div id="campos"></div>
+        <button type="submit">Enviar</button>
+    </form>
+</body>
+</html>

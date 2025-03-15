@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="estilo/styles3.css">
+</head>
+<body>
+
+    <div class="container-box">
+        <i class="fa-solid fa-utensils icon"></i>
+        <h2>Registro</h2>
+
+        <form action="conexion/registro.php" method="POST">
+
+            <div class="row">
+                <div class="col-md-6">
+            <label for="nombre"><i class="fa-solid fa-user"></i> Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="correo"><i class="fa-solid fa-envelope"></i> Correo Electrónico:</label>
+                    <input type="email" id="correo" name="correo" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                <label for="telefono"><i class="fa-solid fa-phone"></i> Teléfono:</label>
+                <input type="text" id="telefono" name="telefono" required>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="rol"><i class="fa-solid fa-briefcase"></i> Rol:</label>
+                    <select id="rol" name="id_rol" class="form-select" required>
+                        <option value="">Seleccione un rol</option>
+                        <option value="Administrador">Administrador</option>
+                        <option value="Veterinario">Veterinario</option>
+                        <option value="Botanico">Botanico</option>
+                        <option value="Investigador">Investigador</option>
+                    </select>
+               </div>
+
+               <div class="col-md-6">
+                <label for="clave">Clave:</label>
+                <input type="password" id="clave" name="clave" required>
+                </div>
+
+            </div>
+
+            <button type="submit"><i class="fa-solid fa-user-plus"></i> Registrarse</button>
+        </form>
+
+        <p>¿Ya tienes cuenta? <a href="index.html">Inicia sesión aquí</a></p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script2.js"></script>
+</body>
+</html>
