@@ -3,43 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Datos</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script defer src="javascript/script.js"></script>
+    <title>Procedimientos</title>
+    <script>
+        function mostrarSubopciones() {
+            document.getElementById("subopcionesActualizar").style.display = "none";
+            document.getElementById("subopcionesInsertar").style.display = "none";
+            document.getElementById("subopcionesEliminar").style.display = "none";
+            document.getElementById("parametrosFormulario").innerHTML = ""; // Limpiar parámetros
+
+            var opcionPrincipal = document.getElementById("opcionPrincipal").value;
+            if (opcionPrincipal === "actualizar") {
+                document.getElementById("subopcionesActualizar").style.display = "block";
+            } else if (opcionPrincipal === "insertar") {
+                document.getElementById("subopcionesInsertar").style.display = "block";
+            } else if (opcionPrincipal === "eliminar") {
+                document.getElementById("subopcionesEliminar").style.display = "block";
+            }
+        }
+
+        function cargarParametros() {
+            var procedimiento = document.querySelector("select[name='subopcion']").value;
+
+            if (procedimiento) {
+                fetch("conexion/obtener_parametros.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: "procedimiento=" + procedimiento
+                })
+                .then(response => response.json())
+                .then(data => {
+                    let parametrosHTML = "";
+                    data.forEach(param => {
+                        parametrosHTML += `
+                            <label for="${param.PARAMETER_NAME}">${param.PARAMETER_NAME}:</label>
+                            <input type="text" name="${param.PARAMETER_NAME}" id="${param.PARAMETER_NAME}">
+                            <br>
+                        `;
+                    });
+
+                    document.getElementById("parametrosFormulario").innerHTML = parametrosHTML;
+                })
+                .catch(error => console.error("Error al obtener parámetros:", error));
+            }
+        }
+    </script>
 </head>
 <body>
-    <h2>Gestión de Datos</h2>
-    
-    <label for="accion">Selecciona una acción:</label>
-    <select id="accion" onchange="mostrarOpciones()">
-        <option value="">-- Seleccionar --</option>
-        <option value="insertar">Insertar</option>
-        <option value="actualizar">Actualizar</option>
-        <option value="eliminar">Eliminar</option>
-    </select>
 
-    <div id="opciones" style="display:none;">
-        <label for="tabla">Selecciona una tabla:</label>
-        <select id="tabla" onchange="mostrarFormulario()">
-            <option value="">-- Seleccionar --</option>
-            <option value="especies">Especies</option>
-            <option value="animales">Animales</option>
-            <option value="plantas">Plantas</option>
-            <option value="produccion">Producción</option>
-            <option value="alimentacion">Alimentación</option>
-            <option value="empleados">Empleados</option>
-            <option value="proveedores">Proveedores</option>
-            <option value="inventario">Inventario</option>
-            <option value="reportes">Reportes</option>
-            <option value="vacunas">Vacunas</option>
+    <form action="conexion/procedimientos.php" method="POST">
+        <label for="opcionPrincipal">¿Qué desea hacer?</label>
+        <select id="opcionPrincipal" name="opcionPrincipal" onchange="mostrarSubopciones()" required>
+            <option value="" disabled selected>-- Selecciona una opción --</option>
+            <option value="actualizar">Actualizar Información</option>
+            <option value="insertar">Insertar Información</option>
+            <option value="eliminar">Eliminar Información</option>
         </select>
-    </div>
 
-    <form id="formulario" action="conexion/procedimientos.php" method="POST" style="display:none;">
-        <input type="hidden" id="accionForm" name="accion">
-        <input type="hidden" id="tablaForm" name="tabla">
-        <div id="campos"></div>
+        <select id="subopcionesActualizar" name="subopcion" style="display: none;" required onchange="cargarParametros()">
+            <option value="" disabled selected>-- Selecciona una opción --</option>
+            <option value="ActualizarVacuna">Actualizar información de vacunas</option>
+            <option value="actualizar_alimentacion">Actualizar Alimentaciones</option>
+            <option value="actualizar_animal">Actualizar información de Animales</option>
+            <option value="actualizar_empleado">Actualizar información de empleados</option>
+            <option value="actualizar_especie">Actualizar especies</option>
+            <option value="actualizar_inventario">Actualizar inventario</option>
+            <option value="actualizar_planta">Actualizar plantas</option>
+            <option value="actualizar_produccion">Actualizar informacion sobre producciones</option>
+            <option value="actualizar_proveedor">Actualizar informacion de proveedores</option>
+        </select>
+
+        <select id="subopcionesInsertar" name="subopcion" style="display: none;" required onchange="cargarParametros()">
+            <option value="" disabled selected>-- Selecciona una subopción --</option>
+            <option value="insertar_1">Insertar 1</option>
+            <option value="insertar_2">Insertar 2</option>
+        </select>
+
+        <select id="subopcionesEliminar" name="subopcion" style="display: none;" required onchange="cargarParametros()">
+            <option value="" disabled selected>-- Selecciona una subopción --</option>
+            <option value="eliminar_1">Eliminar 1</option>
+            <option value="eliminar_2">Eliminar 2</option>
+        </select>
+
+        <div id="parametrosFormulario"></div>
+
         <button type="submit">Enviar</button>
     </form>
+
 </body>
 </html>

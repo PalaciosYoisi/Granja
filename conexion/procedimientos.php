@@ -1,53 +1,48 @@
 <?php
-header('Content-Type: application/json');
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "granja";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    echo json_encode(["success" => false, "message" => "Error de conexión: " . $conn->connect_error]);
-    exit;
-}
-
+// Verificar si el formulario fue enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $accion = $_POST['accion'];
-    $tabla = $_POST['tabla'];
-    unset($_POST['accion'], $_POST['tabla']);
+    $procedimiento = $_POST['subopcion']; // Obtener el procedimiento seleccionado
 
-    $params = array_values($_POST);
-    $placeholders = implode(", ", array_fill(0, count($params), "?"));
-    $param_types = str_repeat("s", count($params));
+    // Conexión a la base de datos
+    $conn = new mysqli("localhost", "root", "", "granja");
 
-    switch ($accion) {
-        case 'insertar':
-            $sql = "CALL insertar_{$tabla}($placeholders)";
-            break;
-        case 'actualizar':
-            $sql = "CALL actualizar_{$tabla}($placeholders)";
-            break;
-        case 'eliminar':
-            $sql = "CALL eliminar_{$tabla}($placeholders)";
-            break;
-        default:
-            echo json_encode(["success" => false, "message" => "Acción no válida"]);
-            exit;
+    if ($conn->connect_error) {
+        die("Conexión fallida: " . $conn->connect_error);
     }
+
+    // Obtener parámetros dinámicamente
+    $sql = "
+        SELECT PARAMETER_NAME
+        FROM INFORMATION_SCHEMA.PARAMETERS
+        WHERE SPECIFIC_NAME = ? AND SPECIFIC_SCHEMA = DATABASE()
+        ORDER BY ORDINAL_POSITION
+    ";
 
     $stmt = $conn->prepare($sql);
-    if ($stmt) {
-        $stmt->bind_param($param_types, ...$params);
-        if ($stmt->execute()) {
-            echo json_encode(["success" => true, "message" => "Operación realizada con éxito"]);
-        } else {
-            echo json_encode(["success" => false, "message" => "Error en la ejecución: " . $stmt->error]);
-        }
-        $stmt->close();
-    } else {
-        echo json_encode(["success" => false, "message" => "Error en la consulta"]);
-    }
-}
+    $stmt->bind_param("s", $procedimiento);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-$conn->close();
+    $parametros = [];
+    while ($row = $result->fetch_assoc()) {
+        $parametros[] = $_POST[$row["PARAMETER_NAME"]];
+    }
+    $stmt->close();
+
+    // Construir la consulta CALL con los parámetros dinámicos
+    $placeholders = implode(", ", array_fill(0, count($parametros), "?"));
+    $query = "CALL $procedimiento($placeholders)";
+
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param(str_repeat("s", count($parametros)), ...$parametros);
+
+    if ($stmt->execute()) {
+        echo "El procedimiento '$procedimiento' se ejecutó correctamente.";
+    } else {
+        echo "Error al ejecutar '$procedimiento': " . $stmt->error;
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+?>
