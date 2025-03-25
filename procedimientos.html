@@ -57,8 +57,6 @@
         <select id="opcionPrincipal" name="opcionPrincipal" onchange="mostrarSubopciones()" required>
             <option value="" disabled selected>-- Selecciona una opción --</option>
             <option value="actualizar">Actualizar Información</option>
-            <option value="insertar">Insertar Información</option>
-            <option value="eliminar">Eliminar Información</option>
         </select>
 
         <select id="subopcionesActualizar" name="subopcion" style="display: none;" onchange="cargarParametros()">
@@ -70,20 +68,9 @@
             <option value="actualizar_especie">Actualizar especies</option>
             <option value="actualizar_inventario">Actualizar inventario</option>
             <option value="actualizar_planta">Actualizar plantas</option>
+            <option value="actualizar_estado_salud">Actualizar estado de salud de un animal o planta</option>
             <option value="actualizar_produccion">Actualizar informacion sobre producciones</option>
             <option value="actualizar_proveedor">Actualizar informacion de proveedores</option>
-        </select>
-
-        <select id="subopcionesInsertar" name="subopcion" style="display: none;" onchange="cargarParametros()">
-            <option value="" disabled selected>-- Selecciona una subopción --</option>
-            <option value="insertar_1">Insertar 1</option>
-            <option value="insertar_2">Insertar 2</option>
-        </select>
-
-        <select id="subopcionesEliminar" name="subopcion" style="display: none;" onchange="cargarParametros()">
-            <option value="" disabled selected>-- Selecciona una subopción --</option>
-            <option value="eliminar_1">Eliminar 1</option>
-            <option value="eliminar_2">Eliminar 2</option>
         </select>
 
         <div id="parametrosFormulario"></div>
