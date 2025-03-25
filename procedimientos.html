@@ -57,6 +57,8 @@
         <select id="opcionPrincipal" name="opcionPrincipal" onchange="mostrarSubopciones()" required>
             <option value="" disabled selected>-- Selecciona una opción --</option>
             <option value="actualizar">Actualizar Información</option>
+            <option value="insertar">Insertar Información</option>
+            <option value="eliminar">Eliminar Información</option>
         </select>
 
         <select id="subopcionesActualizar" name="subopcion" style="display: none;" onchange="cargarParametros()">
@@ -71,6 +73,42 @@
             <option value="actualizar_estado_salud">Actualizar estado de salud de un animal o planta</option>
             <option value="actualizar_produccion">Actualizar informacion sobre producciones</option>
             <option value="actualizar_proveedor">Actualizar informacion de proveedores</option>
+        </select>
+
+        <select id="subopcionesInsertar" name="subopcion" style="display: none;" onchange="cargarParametros()">
+            <option value="" disabled selected>-- Selecciona una opción --</option>
+            <option value="InsertarAlimentacion">Insertar alimentación</option>
+            <option value="InsertarAnimal">Insertar nuevo animal</option>
+            <option value="InsertarCosto">Insertar costo</option>
+            <option value="InsertarEspecie">Insertar nueva especie</option>
+            <option value="InsertarHistorialSalud">Insertar nuevo historial de salud</option>
+            <option value="InsertarInventario">Insertar inventario</option>
+            <option value="InsertarPlanta">Insertar nueva planta</option>
+            <option value="InsertarProduccion">Insertar produccion</option>
+            <option value="InsertarProveedor">Insertar nuevo proveedor</option>
+            <option value="InsertarReporte">Insertar nuevo reporte</option>
+            <option value="InsertarTratamiento">Insertar nuevo tratamiento</option>
+            <option value="InsertarVacuna">Insertar nueva vacuna</option>
+            <option value="InsertarVacunacion">Insertar registro de vacunacion</option>
+            <option value="InsertarVenta">Insertar nueva venta</option>
+        </select>
+
+        <select id="subopcionesEliminar" name="subopcion" style="display: none;" onchange="cargarParametros()">
+            <option value="" disabled selected>-- Selecciona una subopción --</option>
+            <option value="InsertarAlimentacion">Insertar alimentación</option>
+            <option value="InsertarAnimal">Insertar nuevo animal</option>
+            <option value="InsertarCosto">Insertar costo</option>
+            <option value="InsertarEspecie">Insertar nueva especie</option>
+            <option value="InsertarHistorialSalud">Insertar nuevo historial de salud</option>
+            <option value="InsertarInventario">Insertar inventario</option>
+            <option value="InsertarPlanta">Insertar nueva planta</option>
+            <option value="InsertarProduccion">Insertar produccion</option>
+            <option value="InsertarProveedor">Insertar nuevo proveedor</option>
+            <option value="InsertarReporte">Insertar nuevo reporte</option>
+            <option value="InsertarTratamiento">Insertar nuevo tratamiento</option>
+            <option value="InsertarVacuna">Insertar nueva vacuna</option>
+            <option value="InsertarVacunacion">Insertar registro de vacunacion</option>
+            <option value="InsertarVenta">Insertar nueva venta</option>
         </select>
 
         <div id="parametrosFormulario"></div>
