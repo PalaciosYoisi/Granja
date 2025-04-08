@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funciones Especiales</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="inicio.html">Inicio</a>
+        <a href="procedimientos.html">Procedimientos</a>
+        <a href="funciones.html">Funciones</a>
+        <a href="registro.html">Registro</a>
+    </nav>
+
+    <div class="container">
+        <h2>Ejecutar Funciones Especiales</h2>
+        
+        <div class="card-grid">
+            <div class="card">
+                <h3>Estado de Salud Animal</h3>
+                <form id="formEstadoSalud">
+                    <input type="number" name="id_animal" placeholder="ID Animal" required>
+                    <button type="submit">Consultar</button>
+                </form>
+                <div id="resultadoSalud" class="resultado"></div>
+            </div>
+
+            <div class="card">
+                <h3>Inventario por Producto</h3>
+                <form id="formInventario">
+                    <input type="text" name="producto" placeholder="Nombre producto" required>
+                    <button type="submit">Consultar</button>
+                </form>
+                <div id="resultadoInventario" class="resultado"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/scripts.js"></script>
+</body>
+</html>
