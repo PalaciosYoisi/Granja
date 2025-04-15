@@ -6,16 +6,47 @@
     <title>Iniciar Sesión</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
     <link rel="stylesheet" href="estilo/styles2.css">
+    <style>
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+    </style>
 </head>
 <body>
-
     <div class="container-box">
         <h2>Iniciar Sesión</h2>
+        
+        <?php 
+        if(isset($_GET['error'])) {
+            echo '<div class="alert alert-danger">';
+            switch($_GET['error']) {
+                case 'blocked':
+                    $tiempo = isset($_GET['time']) ? round($_GET['time']) : 30;
+                    echo "Cuenta bloqueada temporalmente. Por favor intente nuevamente en $tiempo minutos.";
+                    break;
+                case 'credentials':
+                    echo "Correo electrónico o contraseña incorrectos. Por favor intente nuevamente.";
+                    break;
+                case 'db':
+                    echo "Error de conexión con el servidor. Por favor intente más tarde.";
+                    break;
+                default:
+                    echo "Ocurrió un error al procesar su solicitud.";
+            }
+            echo '</div>';
+        }
+        ?>
 
         <form action="conexion/login.php" method="POST">
-         
             <label for="correo"><i class="fa-solid fa-envelope"></i> Correo:</label>
             <input type="email" id="correo" name="correo" required>
 
@@ -29,6 +60,5 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/script2.js"></script>
 </body>
 </html>
