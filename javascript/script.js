@@ -150,13 +150,13 @@ function enviarFormulario() {
     const form = document.getElementById('miFormulario');
     
     if (opcionPrincipal === 'insertar') {
-        form.action = 'conexion/procedimientos_insertar.php';
+        form.action = '../conexion/procedimientos_insertar.php';
     } 
     else if (opcionPrincipal === 'actualizar') {
-        form.action = 'conexion/procedimientos_actualizar.php';
+        form.action = '../conexion/procedimientos_actualizar.php';
     }
     else if (opcionPrincipal === 'eliminar') {
-        form.action = 'conexion/procedimientos_eliminar.php';
+        form.action = '../conexion/procedimientos_eliminar.php';
     }
     
     return true; 

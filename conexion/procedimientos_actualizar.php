@@ -9,28 +9,29 @@ if ($conexion->connect_error) {
 }
 
 // Verificar que la acción fue seleccionada
-if (empty($_POST['accion'])) {
+if (empty($_POST['opcionPrincipal'])) {
     echo "<script>alert('Error: No se seleccionó ninguna acción.');</script>";
     exit();
 }
 
-$accion = $_POST['accion'];
+$accion = $_POST['opcionPrincipal'];
 $mensaje_alerta = "";
 
 switch ($accion) {
-    // Casos existentes de inserción...
-    // (Mantén los casos de inserción que ya tienes)
-    
-    // Nuevos casos para procedimientos de actualización
     case "ActualizarVacuna":
-        $param1 = $_POST['param1'] ?? null;
-        $param2 = $_POST['param2'] ?? null;
+        $id_vacuna = $_POST['p_id_vacuna'];
+        $nombre_vacuna = $_POST['p_nombre'];
+        $descripcion = $_POST['p_descripcion'];
+        $fabricante = $_POST['p_fabricante'] ;
+        $temperatura = $_POST['p_temperatura_almacenamiento'];
+        $vida_util = $_POST['p_vida_util'] ;
+        $cantidad = $_POST['p_cantidad'] ;
         
-        if (!$param1 || !$param2) {
+        if (!$id_vacuna || !$nombre_vacuna || !$descripcion || !$fabricante || !$temperatura || !$vida_util || !$cantidad) {
             $mensaje_alerta = "Error: Datos incompletos para ActualizarVacuna.";
         } else {
-            $stmt = $conexion->prepare("CALL ActualizarVacuna(?, ?)");
-            $stmt->bind_param("ss", $param1, $param2);
+            $stmt = $conexion->prepare("CALL ActualizarVacuna(?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssssss", $id_vacuna, $nombre_vacuna, $descripcion, $fabricante, $temperatura, $vida_util, $cantidad);
             if ($stmt->execute()) {
                 $mensaje_alerta = "Vacuna actualizada correctamente.";
             } else {
@@ -41,14 +42,18 @@ switch ($accion) {
         break;
 
     case "actualizar_alimentacion":
-        $param1 = $_POST['param1'] ?? null;
-        $param2 = $_POST['param2'] ?? null;
+        $id_alimentacion = $_POST['p_id_alimentacion'] ?? null;
+        $tipo_alimento = $_POST['p_tipo_alimento'] ?? null;
+        $comidas = $_POST['p_comidas_por_dia'] ?? null;
+        $cantidad_g= $_POST['p_cantidad_gramos'] ?? null;
+        $ultima_comida = $_POST['p_fecha_ultima_alimentacion'] ?? null;
         
-        if (!$param1 || !$param2) {
+        if (!$id_alimentacion || !$tipo_alimento || !$comidas || !$cantidad_g || !$ultima_comida) {
             $mensaje_alerta = "Error: Datos incompletos para actualizar_alimentacion.";
-        } else {
-            $stmt = $conexion->prepare("CALL actualizar_alimentacion(?, ?)");
-            $stmt->bind_param("ss", $param1, $param2);
+        } 
+        else {
+            $stmt = $conexion->prepare("CALL actualizar_alimentacion(?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssss", $id_alimentacion, $tipo_alimento, $comidas, $cantidad_g, $ultima_comida);
             if ($stmt->execute()) {
                 $mensaje_alerta = "Alimentación actualizada correctamente.";
             } else {
@@ -189,6 +194,7 @@ switch ($accion) {
         break;
 }
 
+
 $conexion->close();
 ?>
 <!DOCTYPE html>
@@ -197,14 +203,14 @@ $conexion->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultado de la Operación</title>
-    <link rel="stylesheet" href="../style/style.css">
+    <link rel="stylesheet" href="../style/estilo.css">
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const mensaje = "<?php echo htmlspecialchars($mensaje_alerta); ?>";
+            const mensaje = "";
             if (mensaje) {
                 alert(mensaje);
                 // Redirigir después de mostrar el mensaje
-                window.location.href = "../inicio.html";
+                window.location.href = "../procedimientos.html";
             }
         });
     </script>
