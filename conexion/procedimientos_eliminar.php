@@ -9,12 +9,12 @@ if ($conexion->connect_error) {
 }
 
 // Verificar que la acción fue seleccionada
-if (empty($_POST['accion'])) {
+if (empty($_POST['subopcion'])) {
     echo "<script>alert('Error: No se seleccionó ninguna acción.');</script>";
     exit();
 }
 
-$accion = $_POST['accion'];
+$accion = $_POST['subopcion'];  
 $mensaje_alerta = "";
 
 switch ($accion) {
@@ -150,14 +150,14 @@ $conexion->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultado de la Operación</title>
-    <link rel="stylesheet" href="../style/style.css">
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const mensaje = "<?php echo htmlspecialchars($mensaje_alerta); ?>";
+            const mensaje = "<?php echo $mensaje_alerta; ?>";
             if (mensaje) {
                 alert(mensaje);
                 // Redirigir después de mostrar el mensaje
-                window.location.href = "../inicio.html";
+                window.location.href = "../procedimientos.html";
             }
         });
     </script>

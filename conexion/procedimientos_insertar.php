@@ -124,6 +124,29 @@ switch ($accion) {
             }
         }
         break;
+
+        case "InsertarEmpleado":
+        
+            $param1 = $_POST['param1'] ?? null;
+            $param2 = $_POST['param2'] ?? null;
+            $param3 = $_POST['param3'] ?? null;
+            $param4 = $_POST['param4'] ?? null;
+            $param5 = $_POST['param5'] ?? null;
+            
+            if (!$param1 || !$param2 || !$param3 || !$param4 || !$param5) {
+                $mensaje_alerta = "Error: Datos incompletos para InsertarEmpleado.";
+            } else {
+                $stmt = $conexion->prepare("CALL InsertarEmpleado(?, ?, ?, ?, ?)");
+                $stmt->bind_param("ssssd", $param1, $param2, $param3, $param4, $param5);
+                if ($stmt->execute()) {
+                    $mensaje_alerta = "Empleado insertado correctamente.";
+                } else {
+                    $mensaje_alerta = "Error al insertar empleado: " . $stmt->error;
+                }
+                $stmt->close();
+            }
+            break;
+
     case "InsertarHistorialSalud":
   
         $param1 = !empty($_POST['param1']) ? (int)$_POST['param1'] : null;
@@ -256,16 +279,18 @@ switch ($accion) {
         break;
 
     case "InsertarTratamiento":
-        // Parámetros para InsertarTratamiento
+
         $param1 = $_POST['param1'] ?? null;
         $param2 = $_POST['param2'] ?? null;
-        // Agrega todos los parámetros necesarios
+        $param3 = $_POST['param3'] ?? null;
+        $param4 = $_POST['param4'] ?? null;
+        $param5 = $_POST['param5'] ?? null;
         
-        if (!$param1 || !$param2) {
+        if (!$param1 || !$param2 || !$param3 || !$param4 || !$param5) {
             $mensaje_alerta = "Error: Datos incompletos para InsertarTratamiento.";
         } else {
-            $stmt = $conexion->prepare("CALL InsertarTratamiento(?, ?)");
-            $stmt->bind_param("ss", $param1, $param2);
+            $stmt = $conexion->prepare("CALL InsertarTratamiento(?, ?, ?, ?, ?)");
+            $stmt->bind_param("issss", $param1, $param2, $param3, $param4, $param5);
             if ($stmt->execute()) {
                 $mensaje_alerta = "Tratamiento insertado correctamente.";
             } else {
@@ -275,17 +300,44 @@ switch ($accion) {
         }
         break;
 
-    case "InsertarVacuna":
-        // Parámetros para InsertarVacuna
+    case "InsertarVacunacion":
+
         $param1 = $_POST['param1'] ?? null;
         $param2 = $_POST['param2'] ?? null;
-        // Agrega todos los parámetros necesarios
+        $param3 = $_POST['param3'] ?? null;
+        $param4 = $_POST['param4'] ?? null;
+        $param5 = $_POST['param5'] ?? null;
+        $param6 = $_POST['param6'] ?? null;
+        $param7 = $_POST['param7'] ?? null;
         
-        if (!$param1 || !$param2) {
+        if (!$param1 || !$param2 || !$param3 || !$param4 || !$param5 || !$param6 || !$param7) {
+            $mensaje_alerta = "Error: Datos incompletos para InsertarVacunacion.";
+        } else {
+            $stmt = $conexion->prepare("CALL InsertarVacunacion(?, ?, ?, ?, ?. ?, ?)");
+            $stmt->bind_param("iisssis", $param1, $param2, $param3, $param4, $param5, $param6, $param7);
+            if ($stmt->execute()) {
+                $mensaje_alerta = "Vacunacion insertada correctamente.";
+            } else {
+                $mensaje_alerta = "Error al insertar vacunacion: " . $stmt->error;
+            }
+            $stmt->close();
+        }
+        break;
+
+    case "InsertarVacuna":
+
+        $param1 = $_POST['param1'] ?? null;
+        $param2 = $_POST['param2'] ?? null;
+        $param3 = $_POST['param3'] ?? null;
+        $param4 = $_POST['param4'] ?? null;
+        $param5 = $_POST['param5'] ?? null;
+        $param6 = $_POST['param6'] ?? null;
+        
+        if (!$param1 || !$param2 || !$param3 || !$param4 || !$param5 || !$param6) {
             $mensaje_alerta = "Error: Datos incompletos para InsertarVacuna.";
         } else {
-            $stmt = $conexion->prepare("CALL InsertarVacuna(?, ?)");
-            $stmt->bind_param("ss", $param1, $param2);
+            $stmt = $conexion->prepare("CALL InsertarVacuna(?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssssi", $param1, $param2, $param3, $param4, $param5, $param6);
             if ($stmt->execute()) {
                 $mensaje_alerta = "Vacuna insertada correctamente.";
             } else {
@@ -295,37 +347,20 @@ switch ($accion) {
         }
         break;
 
-    case "InsertarVacunacion":
-        // Parámetros para InsertarVacunacion
-        $param1 = $_POST['param1'] ?? null;
-        $param2 = $_POST['param2'] ?? null;
-        // Agrega todos los parámetros necesarios
-        
-        if (!$param1 || !$param2) {
-            $mensaje_alerta = "Error: Datos incompletos para InsertarVacunacion.";
-        } else {
-            $stmt = $conexion->prepare("CALL InsertarVacunacion(?, ?)");
-            $stmt->bind_param("ss", $param1, $param2);
-            if ($stmt->execute()) {
-                $mensaje_alerta = "Vacunación insertada correctamente.";
-            } else {
-                $mensaje_alerta = "Error al insertar vacunación: " . $stmt->error;
-            }
-            $stmt->close();
-        }
-        break;
-
     case "InsertarVenta":
-        // Parámetros para InsertarVenta
+
         $param1 = $_POST['param1'] ?? null;
         $param2 = $_POST['param2'] ?? null;
-        // Agrega todos los parámetros necesarios
+        $param3 = $_POST['param3'] ?? null;
+        $param4 = $_POST['param4'] ?? null;
+        $param5 = $_POST['param5'] ?? null;
+        $param6 = $_POST['param6'] ?? null;
         
-        if (!$param1 || !$param2) {
+        if (!$param1 || !$param2 || !$param3 || !$param4 || !$param5 || !$param6) {
             $mensaje_alerta = "Error: Datos incompletos para InsertarVenta.";
         } else {
-            $stmt = $conexion->prepare("CALL InsertarVenta(?, ?)");
-            $stmt->bind_param("ss", $param1, $param2);
+            $stmt = $conexion->prepare("CALL InsertarVenta(?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("iiddss", $param1, $param2, $param3, $param4, $param5, $param6);
             if ($stmt->execute()) {
                 $mensaje_alerta = "Venta insertada correctamente.";
             } else {
@@ -348,7 +383,6 @@ $conexion->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultado de la Operación</title>
-    <link rel="stylesheet" href="../style/estilo.css">
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const mensaje = "<?php echo $mensaje_alerta; ?>";

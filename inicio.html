@@ -3,42 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-        .container {
-            display: flex;
-            gap: 20px;
-        }
-        .option {
-            width: 200px;
-            height: 100px;
-            background-color: #3498db;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .option:hover {
-            background-color: #2980b9;
-        }
-    </style>
+    <title>Granja - Inicio</title>
+    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
-<body>
-    <div class="container">
-        <div class="option" onclick="window.location.href='vistas.html'">Vistas</div>
-        <div class="option" onclick="window.location.href='procedimientos.html'">Procedimientos Almacenados</div>
+<body class="home-container">
+    <nav class="navbar">
+
+        <div class="nav-links">
+            <a href="inicio.html" class="nav-link active">
+                <i class="fas fa-home"></i> Inicio
+            </a>
+            <a href="funciones.html" class="nav-link">
+                <i class="fas fa-calculator"></i> Funciones
+            </a>
+            <a href="procedimientos.html" class="nav-link">
+                <i class="fas fa-tasks"></i> Procedimientos
+            </a>
+            <a href="vistas.html" class="nav-link">
+                <i class="fas fa-table"></i> Vistas
+            </a>
+            <a href="auditorias.html" class="nav-link">
+                <i class="fas fa-clipboard-check"></i> Auditorías
+            </a>
+        </div>
+    </nav>
+
+    <div class="home-content">
+        <h1 class="dashboard-title">Sistema de Gestión de Granja</h1>
+        <div class="dashboard-grid">
+            <a href="funciones.html" class="dashboard-card">
+                <i class="fas fa-calculator"></i>
+                <h3>Funciones</h3>
+                <p>Consultas rápidas del estado de la granja</p>
+            </a>
+            <a href="procedimientos.html" class="dashboard-card">
+                <i class="fas fa-tasks"></i>
+                <h3>Procedimientos</h3>
+                <p>Gestión completa de operaciones</p>
+            </a>
+            <a href="vistas.html" class="dashboard-card">
+                <i class="fas fa-table"></i>
+                <h3>Vistas</h3>
+                <p>Reportes y análisis de datos</p>
+            </a>
+            <a href="auditorias.html" class="dashboard-card">
+                <i class="fas fa-clipboard-check"></i>
+                <h3>Auditorías</h3>
+                <p>Control y seguimiento de procesos</p>
+            </a>
+        </div>
     </div>
+
+    <footer class="footer">
+        <p>Sistema de Gestión de Granja &copy; 2023</p>
+    </footer>
 </body>
+</html>
 </html>

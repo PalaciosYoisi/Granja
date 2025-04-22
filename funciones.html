@@ -3,41 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Funciones Especiales</title>
+    <title>Funciones</title>
     <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
     <nav class="navbar">
-        <a href="inicio.html">Inicio</a>
-        <a href="procedimientos.html">Procedimientos</a>
-        <a href="funciones.html">Funciones</a>
-        <a href="registro.html">Registro</a>
+        <div class="nav-links">
+            <a href="inicio.html" class="nav-link">
+                <i class="fas fa-home"></i> Inicio
+            </a>
+            <a href="funciones.html" class="nav-link active">
+                <i class="fas fa-calculator"></i> Funciones
+            </a>
+            <a href="procedimientos.html" class="nav-link">
+                <i class="fas fa-tasks"></i> Procedimientos
+            </a>
+            <a href="vistas.html" class="nav-link">
+                <i class="fas fa-table"></i> Vistas
+            </a>
+            <a href="auditorias.html" class="nav-link">
+                <i class="fas fa-clipboard-check"></i> Auditorías
+            </a>
+        </div>
     </nav>
 
     <div class="container">
-        <h2>Ejecutar Funciones Especiales</h2>
-        
-        <div class="card-grid">
-            <div class="card">
-                <h3>Estado de Salud Animal</h3>
-                <form id="formEstadoSalud">
-                    <input type="number" name="id_animal" placeholder="ID Animal" required>
-                    <button type="submit">Consultar</button>
-                </form>
-                <div id="resultadoSalud" class="resultado"></div>
-            </div>
+        <h1>Funciones</h1>
 
-            <div class="card">
-                <h3>Inventario por Producto</h3>
-                <form id="formInventario">
-                    <input type="text" name="producto" placeholder="Nombre producto" required>
-                    <button type="submit">Consultar</button>
-                </form>
-                <div id="resultadoInventario" class="resultado"></div>
-            </div>
+        <div class="form-section">
+            <h2>Consulta de Estado de Salud</h2>
+            <form action="conexion/funciones.php" method="post">
+                <input type="hidden" name="consulta" value="estado_salud">
+                <label for="id_animal_salud">ID del Animal:</label>
+                <input type="number" id="id_animal_salud" name="id_animal" required>
+                <button type="submit" class="btn"><i class="fas fa-search"></i> Consultar Estado de Salud</button>
+            </form>
+        </div>
+
+        <div class="form-section">
+            <h2>Consulta de Última Vacuna</h2>
+            <form action="conexion/funciones.php" method="post">
+                <input type="hidden" name="consulta" value="ultima_vacuna">
+                <label for="id_animal_vacuna">ID del Animal:</label>
+                <input type="number" id="id_animal_vacuna" name="id_animal" required>
+                <button type="submit" class="btn"><i class="fas fa-syringe"></i> Consultar Última Vacuna</button>
+            </form>
+        </div>
+
+        <div class="form-section">
+            <h2>Consulta de Producto en Inventario</h2>
+            <form action="conexion/funciones.php" method="post">
+                <input type="hidden" name="consulta" value="cantidad_producto">
+                <label for="nombre_producto">Nombre del Producto:</label>
+                <input type="text" id="nombre_producto" name="nombre_producto" required>
+                <button type="submit" class="btn"><i class="fas fa-boxes"></i> Consultar Producto</button>
+            </form>
         </div>
     </div>
-
-    <script src="js/scripts.js"></script>
 </body>
 </html>
