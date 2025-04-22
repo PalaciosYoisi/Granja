@@ -9,26 +9,30 @@ if ($conexion->connect_error) {
 }
 
 // Verificar que la acción fue seleccionada
-if (empty($_POST['accion'])) {
+if (empty($_POST['subopcion'])) {
     echo "<script>alert('Error: No se seleccionó ninguna acción.');</script>";
     exit();
 }
 
-$accion = $_POST['accion'];
+$accion = $_POST['subopcion'];  
 $mensaje_alerta = "";
 
 switch ($accion) {
+
     case "InsertarAlimentacion":
-        // Parámetros para InsertarAlimentacion
-        $param1 = $_POST['param1'] ?? null;
-        $param2 = $_POST['param2'] ?? null;
-        // Agrega todos los parámetros necesarios
+
+        $id_especie = $_POST['param1'] ?? null;  
+        $tipo_alimento = $_POST['param2'] ?? null;           
+        $comidas = $_POST['param3'] ?? null;         
+        $cantidad_g = $_POST['param4'] ?? null;     
+        $fecha = $_POST['param5'] ?? null; 
         
-        if (!$param1 || !$param2) {
-            $mensaje_alerta = "Error: Datos incompletos para InsertarAlimentacion.";
-        } else {
-            $stmt = $conexion->prepare("CALL InsertarAlimentacion(?, ?)");
-            $stmt->bind_param("ss", $param1, $param2);
+        if (!$id_especie || !$tipo_alimento || !$comidas || !$cantidad_g || !$fecha) {
+            $mensaje_alerta = "Error: Datos incompletos para actualizar_alimentacion.";
+        } 
+        else {
+            $stmt = $conexion->prepare("CALL InsertarAlimentacion(?, ?, ?, ?, ?)");
+            $stmt->bind_param("isiis", $id_especie, $tipo_alimento, $comidas, $cantidad_g, $fecha);
             if ($stmt->execute()) {
                 $mensaje_alerta = "Alimentación insertada correctamente.";
             } else {
@@ -38,51 +42,34 @@ switch ($accion) {
         }
         break;
 
-    case "InsertarAnimal":
-        // Parámetros para InsertarAnimal
-        $param1 = $_POST['param1'] ?? null;
-        $param2 = $_POST['param2'] ?? null;
-        // Agrega todos los parámetros necesarios
-        
-        if (!$param1 || !$param2) {
-            $mensaje_alerta = "Error: Datos incompletos para InsertarAnimal.";
-        } else {
-            $stmt = $conexion->prepare("CALL InsertarAnimal(?, ?)");
-            $stmt->bind_param("ss", $param1, $param2);
-            if ($stmt->execute()) {
-                $mensaje_alerta = "Animal insertado correctamente.";
+        case "InsertarAnimal":
+            
+            $p_id_especie = $_POST['param1'] ?? null;
+            $p_nombre_cientifico = $_POST['param2'] ?? null;
+            $p_nombre_comun = $_POST['param3'] ?? null;
+            $p_edad = $_POST['param4'] ?? null;
+            $p_ubicacion = $_POST['param5'] ?? null;
+            $p_estado = $_POST['param6'] ?? null;
+            $p_descripcion = $_POST['param7'] ?? null;
+            
+            if (!$p_id_especie || !$p_nombre_cientifico || !$p_nombre_comun || !$p_edad || !$p_ubicacion || !$p_estado || !$p_descripcion) {
+                $mensaje_alerta = "Error: Datos incompletos para InsertarAnimal.";
             } else {
-                $mensaje_alerta = "Error al insertar animal: " . $stmt->error;
+                    $stmt = $conexion->prepare("CALL InsertarAnimal(?, ?, ?, ?, ?, ?, ?)");
+                    $stmt->bind_param("ississs",$p_id_especie,$p_nombre_cientifico, $p_nombre_comun, $p_edad, $p_ubicacion, $p_estado, $p_descripcion);
+                    
+                    if ($stmt->execute()) {
+                        $mensaje_alerta = "Animal insertado correctamente.";
+                    } else {
+                        $mensaje_alerta = "Error al insertar animal: " . $stmt->error;
+                    }
+                    $stmt->close();
             }
-            $stmt->close();
-        }
-        break;
-
-    case "InsertarCosto":
-        // Parámetros para InsertarCosto
-        $param1 = $_POST['param1'] ?? null;
-        $param2 = $_POST['param2'] ?? null;
-        // Agrega todos los parámetros necesarios
-        
-        if (!$param1 || !$param2) {
-            $mensaje_alerta = "Error: Datos incompletos para InsertarCosto.";
-        } else {
-            $stmt = $conexion->prepare("CALL InsertarCosto(?, ?)");
-            $stmt->bind_param("ss", $param1, $param2);
-            if ($stmt->execute()) {
-                $mensaje_alerta = "Costo insertado correctamente.";
-            } else {
-                $mensaje_alerta = "Error al insertar costo: " . $stmt->error;
-            }
-            $stmt->close();
-        }
-        break;
+            break;
 
     case "InsertarEspecie":
-        // Parámetros para InsertarEspecie
         $param1 = $_POST['param1'] ?? null;
         $param2 = $_POST['param2'] ?? null;
-        // Agrega todos los parámetros necesarios
         
         if (!$param1 || !$param2) {
             $mensaje_alerta = "Error: Datos incompletos para InsertarEspecie.";
@@ -96,39 +83,83 @@ switch ($accion) {
             }
             $stmt->close();
         }
-        break;
+    break;
 
+    case "InsertarCosto":
+        $tipo_costo = $_POST['param1'] ?? null;
+        $descripcion = $_POST['param2'] ?? null;
+        $monto = $_POST['param3'] ?? null;
+        $fecha = $_POST['param4'] ?? null;
+        $id_empleado = !empty($_POST['param5']) ? (int)$_POST['param5'] : null;
+        $id_animal = !empty($_POST['param6']) ? (int)$_POST['param6'] : null;
+        $id_especie = !empty($_POST['param7']) ? (int)$_POST['param7'] : null;
+    
+        if (empty($tipo_costo) || empty($descripcion) || empty($monto) || empty($fecha)) {
+            $mensaje_alerta = "Error: Tipo, descripción, monto y fecha son obligatorios.";
+        } else {
+            try {
+                $stmt = $conexion->prepare("CALL InsertarCosto(?, ?, ?, ?, ?, ?, ?)");
+                
+                $stmt->bind_param("ssdsiii", 
+                    $tipo_costo,   
+                    $descripcion,  
+                    $monto,        
+                    $fecha,         
+                    $id_empleado,   
+                    $id_animal,     
+                    $id_especie      
+                );
+                
+                if ($stmt->execute()) {
+                    $mensaje_alerta = "Costo insertado correctamente.";
+                } else {
+                    $mensaje_alerta = "Error al insertar costo: " . $stmt->error;
+                }
+            } catch (mysqli_sql_exception $e) {
+                $mensaje_alerta = "Error de base de datos: " . $e->getMessage();
+            } finally {
+                if (isset($stmt)) {
+                    $stmt->close();
+                }
+            }
+        }
+        break;
     case "InsertarHistorialSalud":
-        // Parámetros para InsertarHistorialSalud
-        $param1 = $_POST['param1'] ?? null;
-        $param2 = $_POST['param2'] ?? null;
+  
+        $param1 = !empty($_POST['param1']) ? (int)$_POST['param1'] : null;
+        $param2 = !empty($_POST['param2']) ? (int)$_POST['param2'] : null;
+        $param3 = $_POST['param3'] ?? null;
+        $param4 = $_POST['param4'] ?? null;
         // Agrega todos los parámetros necesarios
         
-        if (!$param1 || !$param2) {
+        if (!$param3 || !$param4) {
             $mensaje_alerta = "Error: Datos incompletos para InsertarHistorialSalud.";
         } else {
-            $stmt = $conexion->prepare("CALL InsertarHistorialSalud(?, ?)");
-            $stmt->bind_param("ss", $param1, $param2);
+            $stmt = $conexion->prepare("CALL InsertarHistorialSalud(?, ?, ?, ?)");
+            $stmt->bind_param("iiss", $param1, $param2, $param3, $param4);
             if ($stmt->execute()) {
                 $mensaje_alerta = "Historial de salud insertado correctamente.";
             } else {
                 $mensaje_alerta = "Error al insertar historial de salud: " . $stmt->error;
             }
+        
             $stmt->close();
         }
         break;
 
     case "InsertarInventario":
-        // Parámetros para InsertarInventario
+        
         $param1 = $_POST['param1'] ?? null;
         $param2 = $_POST['param2'] ?? null;
-        // Agrega todos los parámetros necesarios
+        $param3 = $_POST['param3'] ?? null;
+        $param4 = $_POST['param4'] ?? null;
+        $param5 = $_POST['param5'] ?? null;
         
-        if (!$param1 || !$param2) {
+        if (!$param1 || !$param2 || !$param3 || !$param4 || !$param5) {
             $mensaje_alerta = "Error: Datos incompletos para InsertarInventario.";
         } else {
-            $stmt = $conexion->prepare("CALL InsertarInventario(?, ?)");
-            $stmt->bind_param("ss", $param1, $param2);
+            $stmt = $conexion->prepare("CALL InsertarInventario(?, ?, ?, ?, ?)");
+            $stmt->bind_param("sissi", $param1, $param2, $param3, $param4, $param5);
             if ($stmt->execute()) {
                 $mensaje_alerta = "Inventario insertado correctamente.";
             } else {
@@ -139,16 +170,17 @@ switch ($accion) {
         break;
 
     case "InsertarPlanta":
-        // Parámetros para InsertarPlanta
         $param1 = $_POST['param1'] ?? null;
         $param2 = $_POST['param2'] ?? null;
-        // Agrega todos los parámetros necesarios
-        
-        if (!$param1 || !$param2) {
+        $param3 = $_POST['param3'] ?? null;
+        $param4 = $_POST['param4'] ?? null;
+        $param5 = $_POST['param5'] ?? null;
+
+        if (!$param1 || !$param2 || !$param3 || !$param4 || !$param5) {
             $mensaje_alerta = "Error: Datos incompletos para InsertarPlanta.";
         } else {
-            $stmt = $conexion->prepare("CALL InsertarPlanta(?, ?)");
-            $stmt->bind_param("ss", $param1, $param2);
+            $stmt = $conexion->prepare("CALL InsertarPlanta(?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssss", $param1, $param2, $param3, $param4, $param5);
             if ($stmt->execute()) {
                 $mensaje_alerta = "Planta insertada correctamente.";
             } else {
@@ -159,16 +191,18 @@ switch ($accion) {
         break;
 
     case "InsertarProduccion":
-        // Parámetros para InsertarProduccion
+        
         $param1 = $_POST['param1'] ?? null;
         $param2 = $_POST['param2'] ?? null;
-        // Agrega todos los parámetros necesarios
+        $param3 = $_POST['param3'] ?? null;
+        $param4 = $_POST['param4'] ?? null;
+
         
-        if (!$param1 || !$param2) {
+        if (!$param1 || !$param2 || !$param3 || !$param4) {
             $mensaje_alerta = "Error: Datos incompletos para InsertarProduccion.";
         } else {
-            $stmt = $conexion->prepare("CALL InsertarProduccion(?, ?)");
-            $stmt->bind_param("ss", $param1, $param2);
+            $stmt = $conexion->prepare("CALL InsertarProduccion(?, ?, ?, ?)");
+            $stmt->bind_param("isds", $param1, $param2, $param3, $param4);
             if ($stmt->execute()) {
                 $mensaje_alerta = "Producción insertada correctamente.";
             } else {
@@ -179,16 +213,17 @@ switch ($accion) {
         break;
 
     case "InsertarProveedor":
-        // Parámetros para InsertarProveedor
+    
         $param1 = $_POST['param1'] ?? null;
         $param2 = $_POST['param2'] ?? null;
-        // Agrega todos los parámetros necesarios
+        $param3 = $_POST['param3'] ?? null;
+        $param4 = $_POST['param4'] ?? null;
         
-        if (!$param1 || !$param2) {
+        if (!$param1 || !$param2 || $param3 || $param4) {
             $mensaje_alerta = "Error: Datos incompletos para InsertarProveedor.";
         } else {
-            $stmt = $conexion->prepare("CALL InsertarProveedor(?, ?)");
-            $stmt->bind_param("ss", $param1, $param2);
+            $stmt = $conexion->prepare("CALL InsertarProveedor(?, ?, ?, ?)");
+            $stmt->bind_param("ssss", $param1, $param2, $param3, $param4);
             if ($stmt->execute()) {
                 $mensaje_alerta = "Proveedor insertado correctamente.";
             } else {
@@ -199,16 +234,18 @@ switch ($accion) {
         break;
 
     case "InsertarReporte":
-        // Parámetros para InsertarReporte
+
         $param1 = $_POST['param1'] ?? null;
-        $param2 = $_POST['param2'] ?? null;
-        // Agrega todos los parámetros necesarios
-        
-        if (!$param1 || !$param2) {
+        $param2 = !empty($_POST['param2']) ? (int)$_POST['param2'] : null;
+        $param3 = !empty($_POST['param3']) ? (int)$_POST['param3'] : null;
+        $param4 = $_POST['param4'] ?? null;
+        $param5 = $_POST['param5'] ?? null;
+
+        if (!$param1 || !$param4 || !$param5) {
             $mensaje_alerta = "Error: Datos incompletos para InsertarReporte.";
         } else {
-            $stmt = $conexion->prepare("CALL InsertarReporte(?, ?)");
-            $stmt->bind_param("ss", $param1, $param2);
+            $stmt = $conexion->prepare("CALL InsertarReporte(?, ?, ?, ?, ?)");
+            $stmt->bind_param("iiiss", $param1, $param2, $param3, $param4, $param5);
             if ($stmt->execute()) {
                 $mensaje_alerta = "Reporte insertado correctamente.";
             } else {
@@ -311,70 +348,22 @@ $conexion->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultado de la Operación</title>
-    <link rel="stylesheet" href="../style/style.css">
-    <style>
-        .result-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .success-message {
-            color: #28a745;
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 1.5rem;
-        }
-        .error-message {
-            color: #dc3545;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 1.5rem;
-        }
-        .btn-back {
-            display: inline-block;
-            padding: 0.5rem 1.5rem;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        .btn-back:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <link rel="stylesheet" href="../style/estilo.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const mensaje = "<?php echo $mensaje_alerta; ?>";
+            if (mensaje) {
+                alert(mensaje);
+                // Redirigir después de mostrar el mensaje
+                window.location.href = "../procedimientos.html";
+            }
+        });
+    </script>
 </head>
 <body>
     <div class="container">
-        <div class="result-container">
-            <h2>Resultado de la Operación</h2>
-            
-            <?php if (!empty($mensaje_alerta)): ?>
-                <?php if (strpos($mensaje_alerta, 'Error:') === 0): ?>
-                    <div class="error-message">
-                        <strong>Error:</strong> <?php echo htmlspecialchars(substr($mensaje_alerta, 7)); ?>
-                    </div>
-                <?php else: ?>
-                    <div class="success-message">
-                        <strong>Éxito:</strong> <?php echo htmlspecialchars($mensaje_alerta); ?>
-                    </div>
-                <?php endif; ?>
-            <?php else: ?>
-                <div class="error-message">
-                    <strong>Error:</strong> No se recibió respuesta del servidor.
-                </div>
-            <?php endif; ?>
-            
-            <a href="javascript:history.back()" class="btn-back">Volver Atrás</a>
-            <a href="../inicio.html" class="btn-back" style="margin-left: 10px;">Ir a Inicio</a>
-        </div>
+        <h2>Procesando operación...</h2>
+        <p>Por favor espere mientras se completa la operación.</p>
     </div>
 </body>
 </html>
