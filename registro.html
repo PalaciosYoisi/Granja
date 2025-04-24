@@ -3,102 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro</title>
+    <title>Registro de Usuario</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Arial', sans-serif;
-        }
-        .login-container {
-            max-width: 600px;
-            margin: 100px auto;
-            padding: 30px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
-        .form-control {
-            height: 45px;
-            margin-bottom: 15px;
-        }
-        .btn-register {
-            background-color: #4e73df;
-            color: white;
-            height: 45px;
-            font-weight: 600;
-            width: 100%;
-        }
-        .btn-register:hover {
-            background-color: #3a5ec0;
-        }
-        .alert {
-            margin-bottom: 20px;
-        }
-        .form-label {
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="css/estilo_registro.css">
 </head>
 <body>
     <div class="container">
-        <div class="login-container">
+        <div class="login-container mx-auto">
             <h2 class="text-center mb-4">Registro de Usuario</h2>
             
-            <form action="conexion/registro.php" method="POST">
+            <!-- Mensaje de error (solo aparece si hay error) -->
+            <?php if (isset($_GET['error']) && !empty($_GET['error'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <?php echo htmlspecialchars($_GET['error']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+
+            <form action="conexion/registro.php" method="POST" id="registroForm" novalidate>
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="nombre" class="form-label"><i class="fa-solid fa-user"></i> Nombre:</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" required>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="nombre" class="form-label"><i class="fa-solid fa-user"></i> Nombre Completo:</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                        <div class="invalid-feedback">Por favor ingrese su nombre</div>
                     </div>
                     
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="correo" class="form-label"><i class="fa-solid fa-envelope"></i> Correo Electrónico:</label>
-                            <input type="email" class="form-control" id="correo" name="correo" required>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="correo" class="form-label"><i class="fa-solid fa-envelope"></i> Correo Electrónico:</label>
+                        <input type="email" class="form-control" id="correo" name="correo" required>
+                        <div class="invalid-feedback">Ingrese un correo válido</div>
                     </div>
                 </div>
                 
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="telefono" class="form-label"><i class="fa-solid fa-phone"></i> Teléfono:</label>
-                            <input type="text" class="form-control" id="telefono" name="telefono" required>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="telefono" class="form-label"><i class="fa-solid fa-phone"></i> Teléfono:</label>
+                        <input type="tel" class="form-control" id="telefono" name="telefono" required>
+                        <div class="invalid-feedback">Ingrese su teléfono</div>
                     </div>
                     
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="tipo_usuario" class="form-label"><i class="fa-solid fa-briefcase"></i> Tipo de Usuario:</label>
-                            <select id="tipo_usuario" name="tipo_usuario" class="form-select" required>
-                                <option value="">Seleccione un rol</option>
-                                <option value="Administrador">Administrador</option>
-                                <option value="Veterinario">Veterinario</option>
-                                <option value="Botanico">Botánico</option>
-                                <option value="Investigador">Investigador</option>
-                            </select>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="tipo_usuario" class="form-label"><i class="fa-solid fa-briefcase"></i> Tipo de Usuario:</label>
+                        <select id="tipo_usuario" name="tipo_usuario" class="form-select" required>
+                            <option value="" selected disabled>Seleccione un rol</option>
+                            <option value="Administrador">Administrador</option>
+                            <option value="Veterinario">Veterinario</option>
+                            <option value="Botanico">Botánico</option>
+                            <option value="Investigador">Investigador</option>
+                        </select>
+                        <div class="invalid-feedback">Seleccione un tipo de usuario</div>
                     </div>
                 </div>
                 
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="clave" class="form-label"><i class="fa-solid fa-lock"></i> Contraseña:</label>
-                            <input type="password" class="form-control" id="clave" name="clave" required>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="clave" class="form-label"><i class="fa-solid fa-lock"></i> Contraseña:</label>
+                        <input type="password" class="form-control" id="clave" name="clave" required minlength="8">
+                        <div class="invalid-feedback">Mínimo 8 caracteres</div>
+                        <small class="text-muted">Mínimo 8 caracteres</small>
                     </div>
                     
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="confirmar_clave" class="form-label"><i class="fa-solid fa-lock"></i> Confirmar Contraseña:</label>
-                            <input type="password" class="form-control" id="confirmar_clave" name="confirmar_clave" required>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="confirmar_clave" class="form-label"><i class="fa-solid fa-lock"></i> Confirmar Contraseña:</label>
+                        <input type="password" class="form-control" id="confirmar_clave" name="confirmar_clave" required minlength="8">
+                        <div class="invalid-feedback">Las contraseñas deben coincidir</div>
                     </div>
                 </div>
                 
@@ -108,21 +78,42 @@
             </form>
             
             <div class="text-center mt-3">
-                <p>¿Ya tienes cuenta? <a href="index.php">Inicia sesión aquí</a></p>
+                <p>¿Ya tienes cuenta? <a href="index.php" class="text-success">Inicia sesión aquí</a></p>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Validación de contraseñas coincidentes
-        document.querySelector('form').addEventListener('submit', function(e) {
+        // Validación del formulario
+        document.getElementById('registroForm').addEventListener('submit', function(event) {
+            const form = event.target;
             const password = document.getElementById('clave').value;
             const confirmPassword = document.getElementById('confirmar_clave').value;
             
+            // Validar coincidencia de contraseñas
             if (password !== confirmPassword) {
-                e.preventDefault();
-                alert('Las contraseñas no coinciden. Por favor, inténtelo de nuevo.');
+                document.getElementById('confirmar_clave').classList.add('is-invalid');
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            // Validación de Bootstrap
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            form.classList.add('was-validated');
+        });
+
+        // Validación en tiempo real para contraseñas
+        document.getElementById('confirmar_clave').addEventListener('input', function() {
+            const password = document.getElementById('clave').value;
+            if (this.value !== password) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
             }
         });
     </script>

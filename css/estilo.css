@@ -1,10 +1,10 @@
-/* Estilos base - Temática Granja */
+
 :root {
-    --primary-color: #2c5e2e; /* Verde oscuro - campos */
-    --secondary-color: #4a8c4e; /* Verde medio - vegetación */
-    --accent-color: #e67e22; /* Naranja - tierra/agricultura */
-    --light-color: #f5f9f5; /* Verde muy claro */
-    --dark-color: #1a3c1e; /* Verde muy oscuro */
+    --primary-color: #2c5e2e; 
+    --secondary-color: #4a8c4e; 
+    --accent-color: #e67e22; 
+    --light-color: #f5f9f5; 
+    --dark-color: #1a3c1e; 
     --text-color: #333333;
     --background-color: #f8f9f8;
     --success-color: #27ae60;
@@ -23,7 +23,6 @@ body {
     line-height: 1.6;
 }
 
-/* Barra de navegación - Granja */
 .navbar {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     padding: 1rem 2rem;
@@ -130,7 +129,7 @@ h1::after {
     background: var(--accent-color);
 }
 
-/* Formularios - Estilo unificado */
+
 .form-container {
     max-width: 800px;
     margin: 0 auto;
@@ -185,7 +184,7 @@ button:hover, .btn:hover {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* Secciones de formulario - Para funciones.html */
+
 .form-section {
     margin-bottom: 2rem;
     padding: 1.5rem;
@@ -209,7 +208,7 @@ button:hover, .btn:hover {
     padding-bottom: 0.5rem;
 }
 
-/* Resultados */
+
 .result, .resultado {
     margin-top: 1.5rem;
     padding: 1.5rem;
@@ -218,7 +217,7 @@ button:hover, .btn:hover {
     border-left: 4px solid var(--secondary-color);
 }
 
-/* Página de Inicio - Dashboard Granja */
+
 .home-container {
     min-height: 100vh;
     background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center;
@@ -303,7 +302,7 @@ button:hover, .btn:hover {
     margin-bottom: 0;
 }
 
-/* Footer */
+
 .footer {
     background: var(--dark-color);
     color: white;
@@ -323,7 +322,7 @@ button:hover, .btn:hover {
     background: var(--accent-color);
 }
 
-/* Responsividad */
+
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;
@@ -357,7 +356,7 @@ button:hover, .btn:hover {
     }
 }
 
-/* Animaciones */
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }

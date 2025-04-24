@@ -134,7 +134,7 @@ $conn->close();
             </div>
         </div>
         
-        <a href="../funciones.html" class="back-link">Volver al formulario</a>
+        <a href="../funciones.html" class="back-link">Volver</a>
     </div>
 </body>
 </html>

@@ -6,36 +6,7 @@
     <title>Iniciar Sesión</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Arial', sans-serif;
-        }
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 30px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
-        .form-control {
-            height: 45px;
-            margin-bottom: 15px;
-        }
-        .btn-login {
-            background-color: #4e73df;
-            color: white;
-            height: 45px;
-            font-weight: 600;
-        }
-        .btn-login:hover {
-            background-color: #3a5ec0;
-        }
-        .alert {
-            margin-bottom: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="css/estilo_login.css">
 </head>
 <body>
     <div class="container">

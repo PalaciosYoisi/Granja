@@ -1,24 +1,30 @@
 <?php
+// Configuración de la base de datos
 $servidor = "localhost";
 $usuario = "root";
 $password = "";
-$base_datos = "granja"; 
+$base_datos = "granja";
 
+// Habilitar reporte de errores
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// Iniciar sesión para mensajes de error
+session_start();
+
 try {
+    // Crear conexión
     $conn = new mysqli($servidor, $usuario, $password, $base_datos);
     
+    // Verificar conexión
     if ($conn->connect_error) {
-        throw new Exception("Conexión fallida: " . $conn->connect_error);
+        throw new Exception("Error de conexión: " . $conn->connect_error);
     }
 
-    // Forzar uso de la base de datos correcta
-    $conn->select_db($base_datos);
-
+    // Verificar método POST
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Obtener y limpiar datos del formulario
         $nombre = $conn->real_escape_string(trim($_POST["nombre"]));
         $correo = $conn->real_escape_string(trim($_POST["correo"]));
         $telefono = $conn->real_escape_string(trim($_POST["telefono"]));
@@ -26,7 +32,7 @@ try {
         $clave = trim($_POST["clave"]);
         $confirmar_clave = trim($_POST["confirmar_clave"]);
 
-        // Validaciones
+        // Validaciones básicas
         if (empty($nombre) || empty($correo) || empty($telefono) || empty($tipo_usuario) || empty($clave)) {
             throw new Exception("Todos los campos son obligatorios");
         }
@@ -39,67 +45,75 @@ try {
             throw new Exception("Correo electrónico inválido");
         }
 
-        // Verificar si el correo existe
-        $check = $conn->prepare("SELECT id_usuario FROM usuarios WHERE correo = ?");
-        $check->bind_param("s", $correo);
-        $check->execute();
-        $check->store_result();
-        
-        if ($check->num_rows > 0) {
-            throw new Exception("El correo ya está registrado");
+        if (strlen($clave) < 8) {
+            throw new Exception("La contraseña debe tener al menos 8 caracteres");
         }
-        $check->close();
 
-        // Hash de contraseña
+        // Verificar si el correo ya existe
+        $stmt_check = $conn->prepare("SELECT id_usuario FROM usuarios WHERE correo = ?");
+        if (!$stmt_check) {
+            throw new Exception("Error al preparar la consulta: " . $conn->error);
+        }
+        
+        $stmt_check->bind_param("s", $correo);
+        $stmt_check->execute();
+        $stmt_check->store_result();
+        
+        if ($stmt_check->num_rows > 0) {
+            throw new Exception("El correo electrónico ya está registrado");
+        }
+        $stmt_check->close();
+
+        // Hash de la contraseña
         $clave_hash = password_hash($clave, PASSWORD_BCRYPT);
 
-        // Insertar usando consulta preparada
+        // Ajustar tipo_usuario para coincidir con ENUM
+        $tipo_usuario_ajustado = match(strtolower($tipo_usuario)) {
+            'administrador' => 'Administrador',
+            'veterinario' => 'Veterinario',
+            'botanico' => 'Botánico',
+            'investigador' => 'Investigador',
+            default => throw new Exception("Tipo de usuario no válido")
+        };
+
+        // Insertar nuevo usuario (activará el trigger alerta_nuevo_usuario)
         $stmt = $conn->prepare("INSERT INTO usuarios (nombre, correo, telefono, tipo_usuario, clave) VALUES (?, ?, ?, ?, ?)");
-        
         if (!$stmt) {
-            throw new Exception("Error preparando la consulta: " . $conn->error);
+            throw new Exception("Error al preparar la consulta: " . $conn->error);
         }
 
-        $stmt->bind_param("sssss", $nombre, $correo, $telefono, $tipo_usuario, $clave_hash);
+        $stmt->bind_param("sssss", $nombre, $correo, $telefono, $tipo_usuario_ajustado, $clave_hash);
         
-        if (!$stmt->execute()) {
-            // Solución alternativa si persiste el error
-            $sql_alternativo = "INSERT IGNORE INTO usuarios (nombre, correo, telefono, tipo_usuario, clave) 
-                              VALUES ('$nombre', '$correo', '$telefono', '$tipo_usuario', '$clave_hash')";
-            
-            if (!$conn->query($sql_alternativo)) {
-                throw new Exception("Error al registrar: " . $conn->error);
+        if ($stmt->execute()) {
+            // Registro exitoso
+            $_SESSION['registro_exitoso'] = true;
+            header("Location: ../index.php?registro=exito");
+            exit();
+        } else {
+            // Verificar si el error es por el trigger
+            if (strpos($stmt->error, "Table 'granja.alertas' doesn't exist") !== false) {
+                throw new Exception("Error en el sistema de notificaciones. Por favor contacte al administrador.");
+            } else {
+                throw new Exception("Error al registrar el usuario: " . $stmt->error);
             }
         }
-
-        header("Location: ../index.php?registro=exito");
-        exit();
     }
 } catch (Exception $e) {
-    // Página de error profesional
-    echo '<!DOCTYPE html>
-    <html>
-    <head>
-        <title>Error de Registro</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    </head>
-    <body class="bg-light">
-        <div class="container mt-5">
-            <div class="card border-danger">
-                <div class="card-header bg-danger text-white">
-                    <h4><i class="fas fa-exclamation-triangle"></i> Error en el Registro</h4>
-                </div>
-                <div class="card-body">
-                    <p class="card-text">'.htmlspecialchars($e->getMessage()).'</p>
-                    <a href="../registro.html" class="btn btn-primary">
-                        <i class="fas fa-arrow-left"></i> Volver al formulario
-                    </a>
-                </div>
-            </div>
-        </div>
-    </body>
-    </html>';
+    // Registrar error en log
+    error_log("Error en registro: " . $e->getMessage());
+    
+    // Redirigir con error
+    $_SESSION['error_registro'] = $e->getMessage();
+    header("Location: ../registro.html?error=" . urlencode($e->getMessage()));
+    exit();
 } finally {
+    // Cerrar conexiones
+    if (isset($stmt)) {
+        $stmt->close();
+    }
+    if (isset($stmt_check)) {
+        $stmt_check->close();
+    }
     if (isset($conn)) {
         $conn->close();
     }

@@ -1,0 +1,26 @@
+/*estilo registro*/
+body {
+    background-color: #f8f9fa;
+}
+.login-container {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    margin-top: 50px;
+    padding: 30px;
+    max-width: 800px;
+}
+.btn-register {
+    background-color: #4CAF50;
+    color: white;
+    width: 100%;
+    padding: 10px;
+    font-weight: 500;
+}
+.btn-register:hover {
+    background-color: #45a049;
+}
+.form-control:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
+}
