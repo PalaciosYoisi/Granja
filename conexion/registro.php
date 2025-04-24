@@ -1,28 +1,22 @@
 <?php
-// Configuración de la base de datos
 $servidor = "localhost";
 $usuario = "root";
 $password = "";
 $base_datos = "granja";
 
-// Habilitar reporte de errores
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Iniciar sesión para mensajes de error
 session_start();
 
 try {
-    // Crear conexión
     $conn = new mysqli($servidor, $usuario, $password, $base_datos);
     
-    // Verificar conexión
     if ($conn->connect_error) {
         throw new Exception("Error de conexión: " . $conn->connect_error);
     }
 
-    // Verificar método POST
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Obtener y limpiar datos del formulario
         $nombre = $conn->real_escape_string(trim($_POST["nombre"]));
@@ -32,7 +26,6 @@ try {
         $clave = trim($_POST["clave"]);
         $confirmar_clave = trim($_POST["confirmar_clave"]);
 
-        // Validaciones básicas
         if (empty($nombre) || empty($correo) || empty($telefono) || empty($tipo_usuario) || empty($clave)) {
             throw new Exception("Todos los campos son obligatorios");
         }
@@ -76,7 +69,6 @@ try {
             default => throw new Exception("Tipo de usuario no válido")
         };
 
-        // Insertar nuevo usuario (activará el trigger alerta_nuevo_usuario)
         $stmt = $conn->prepare("INSERT INTO usuarios (nombre, correo, telefono, tipo_usuario, clave) VALUES (?, ?, ?, ?, ?)");
         if (!$stmt) {
             throw new Exception("Error al preparar la consulta: " . $conn->error);
@@ -90,7 +82,6 @@ try {
             header("Location: ../index.php?registro=exito");
             exit();
         } else {
-            // Verificar si el error es por el trigger
             if (strpos($stmt->error, "Table 'granja.alertas' doesn't exist") !== false) {
                 throw new Exception("Error en el sistema de notificaciones. Por favor contacte al administrador.");
             } else {

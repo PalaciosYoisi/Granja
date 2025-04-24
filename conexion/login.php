@@ -35,8 +35,19 @@ if (mysqli_num_rows($resultado) == 1) {
         exit();
     }
     
-    // 5. Verificar credenciales
+    // 5. Verificar credenciales (compatibilidad con ambos tipos de contraseña)
+    $clave_valida = false;
+    
+    // Primero intentar con contraseña en texto plano (para usuarios antiguos)
     if ($clave === $usuario['clave']) {
+        $clave_valida = true;
+    } 
+    // Si no coincide, verificar si es una contraseña encriptada
+    else if (password_verify($clave, $usuario['clave'])) {
+        $clave_valida = true;
+    }
+    
+    if ($clave_valida) {
         // Credenciales correctas - resetear bloqueo
         mysqli_query($conexion, "UPDATE bloqueo_usuarios 
                                SET intentos_fallidos = 0, 
@@ -92,8 +103,8 @@ function manejarIntentoFallido($conexion, $id_usuario) {
                                WHERE id_usuario = $id_usuario");
         
         // Registrar alerta de bloqueo
-        mysqli_query($conexion, "INSERT INTO alertas (mensaje, fecha)
-                               VALUES ('Usuario ID $id_usuario bloqueado temporalmente', NOW())");
+        mysqli_query($conexion, "INSERT INTO alertas (categoria, mensaje, fecha)
+                               VALUES ('usuario', 'Usuario ID $id_usuario bloqueado temporalmente', NOW())");
         
         mysqli_close($conexion);
         header("Location: ../index.php?error=blocked&time=30");

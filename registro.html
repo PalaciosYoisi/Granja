@@ -13,15 +13,6 @@
         <div class="login-container mx-auto">
             <h2 class="text-center mb-4">Registro de Usuario</h2>
             
-            <!-- Mensaje de error (solo aparece si hay error) -->
-            <?php if (isset($_GET['error']) && !empty($_GET['error'])): ?>
-                <div class="alert alert-danger alert-dismissible fade show">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <?php echo htmlspecialchars($_GET['error']); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            <?php endif; ?>
-
             <form action="conexion/registro.php" method="POST" id="registroForm" novalidate>
                 <div class="row">
                     <div class="col-md-6 mb-3">
