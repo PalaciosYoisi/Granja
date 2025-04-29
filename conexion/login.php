@@ -13,13 +13,19 @@ if (!$conexion) {
 $correo = mysqli_real_escape_string($conexion, $_POST['correo']);
 $clave = $_POST['clave'];
 
-// 3. Buscar usuario en la base de datos
-$sql_usuario = "SELECT id_usuario, clave FROM usuarios WHERE correo = '$correo' LIMIT 1";
+// 3. Buscar usuario en la base de datos (ahora incluyendo el tipo de usuario)
+// En login.php, modificar la consulta SQL para incluir el nombre:
+    $sql_usuario = "SELECT id_usuario, clave, tipo_usuario, nombre FROM usuarios WHERE correo = '$correo' LIMIT 1";
+
+    // Y luego guardar el nombre en la sesión:
+    $_SESSION['nombre'] = $usuario['nombre'];
+
 $resultado = mysqli_query($conexion, $sql_usuario);
 
 if (mysqli_num_rows($resultado) == 1) {
-    $usuario = mysqli_fetch_assoc($resultado);
+    $usuario = mysqli_fetch_assoc($resultado); 
     $id_usuario = $usuario['id_usuario'];
+    $tipo_usuario = $usuario['tipo_usuario'];
     
     // 4. Verificar si el usuario está actualmente bloqueado
     $sql_bloqueo = "SELECT bloqueado_hasta FROM bloqueo_usuarios 
@@ -63,9 +69,16 @@ if (mysqli_num_rows($resultado) == 1) {
         session_start();
         $_SESSION['usuario_id'] = $id_usuario;
         $_SESSION['correo'] = $correo;
+        $_SESSION['tipo_usuario'] = $tipo_usuario;
         
         mysqli_close($conexion);
-        header("Location: ../inicio.html");
+        
+        // Redirigir según el tipo de usuario
+        if ($tipo_usuario == 'Administrador') {
+            header("Location: ../dashboard.php");
+        } else {
+            header("Location: ../inicio.php");
+        }
         exit();
     } else {
         // Credenciales incorrectas - manejar intento fallido
@@ -95,7 +108,7 @@ function manejarIntentoFallido($conexion, $id_usuario) {
     // 3. Bloquear si alcanza 3 intentos fallidos
     if ($intentos_fallidos >= 3) {
         $ahora = date('Y-m-d H:i:s');
-        $bloqueado_hasta = date('Y-m-d H:i:s', strtotime('+30 minutes'));
+        $bloqueado_hasta = date('Y-m-d H:i:s', strtotime('+3 minutes'));
         
         mysqli_query($conexion, "UPDATE bloqueo_usuarios 
                                SET bloqueado_desde = '$ahora', 
@@ -107,7 +120,7 @@ function manejarIntentoFallido($conexion, $id_usuario) {
                                VALUES ('usuario', 'Usuario ID $id_usuario bloqueado temporalmente', NOW())");
         
         mysqli_close($conexion);
-        header("Location: ../index.php?error=blocked&time=30");
+        header("Location: ../index.php?error=blocked&time=3");
         exit();
     }
     

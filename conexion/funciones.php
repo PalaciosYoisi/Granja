@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             break;
             
         case "cantidad_producto":
-            $nombre_producto = $_POST["nombre_producto"];
+            $nombre_producto = $_POST["producto_nombre"];
             $sql = "SELECT mostrar_cantidad_producto('$nombre_producto') AS resultado";
             $titulo = "Información del Producto: $nombre_producto";
             break;

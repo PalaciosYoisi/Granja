@@ -82,6 +82,15 @@ body {
     transform: translateY(-2px);
 }
 
+.welcome-message {
+    margin-right: 20px;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 /* Contenedor principal */
 .container {
     max-width: 1200px;

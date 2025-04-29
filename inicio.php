@@ -11,17 +11,22 @@
     <nav class="navbar">
 
         <div class="nav-links">
-            <a href="inicio.html" class="nav-link active">
+
+            <span class="welcome-message">
+                <i class="fas fa-user"></i> Bienvenido, <?php echo isset($_SESSION['nombre_usuario']) ? htmlspecialchars($_SESSION['nombre_usuario']) : 'Usuario'; ?>
+            </span>
+            
+            <a href="inicio.php" class="nav-link active">
                 <i class="fas fa-home"></i> Inicio
             </a>
             <a href="funciones.html" class="nav-link">
-                <i class="fas fa-calculator"></i> Funciones
+                <i class="fas fa-calculator"></i> Consultas Rápidas
             </a>
             <a href="procedimientos.html" class="nav-link">
-                <i class="fas fa-tasks"></i> Procedimientos
+                <i class="fas fa-tasks"></i> Operaciones
             </a>
             <a href="vistas.html" class="nav-link">
-                <i class="fas fa-table"></i> Vistas
+                <i class="fas fa-table"></i> Monitoreo
             </a>
             <a href="auditorias.html" class="nav-link">
                 <i class="fas fa-clipboard-check"></i> Auditorías
@@ -34,17 +39,17 @@
         <div class="dashboard-grid">
             <a href="funciones.html" class="dashboard-card">
                 <i class="fas fa-calculator"></i>
-                <h3>Funciones</h3>
+                <h3>Consultas Rápidas</h3>
                 <p>Consultas rápidas del estado de la granja</p>
             </a>
             <a href="procedimientos.html" class="dashboard-card">
                 <i class="fas fa-tasks"></i>
-                <h3>Procedimientos</h3>
+                <h3>Operaciones</h3>
                 <p>Gestión completa de operaciones</p>
             </a>
             <a href="vistas.html" class="dashboard-card">
                 <i class="fas fa-table"></i>
-                <h3>Vistas</h3>
+                <h3>Monitoreo</h3>
                 <p>Reportes y análisis de datos</p>
             </a>
             <a href="auditorias.html" class="dashboard-card">

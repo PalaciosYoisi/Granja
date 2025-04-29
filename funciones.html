@@ -10,7 +10,7 @@
 <body>
     <nav class="navbar">
         <div class="nav-links">
-            <a href="inicio.html" class="nav-link">
+            <a href="inicio.php" class="nav-link">
                 <i class="fas fa-home"></i> Inicio
             </a>
             <a href="funciones.html" class="nav-link active">
@@ -56,7 +56,7 @@
             <form action="conexion/funciones.php" method="post">
                 <input type="hidden" name="consulta" value="cantidad_producto">
                 <label for="nombre_producto">Nombre del Producto:</label>
-                <input type="text" id="nombre_producto" name="nombre_producto" required>
+                <input type="text" id="nombre_producto" name="producto_nombre" required>
                 <button type="submit" class="btn"><i class="fas fa-boxes"></i> Consultar Producto</button>
             </form>
         </div>

@@ -16,28 +16,31 @@
             <?php if(isset($_GET['error'])): ?>
                 <div class="alert alert-danger">
                     <?php 
-                   switch($_GET['error']) {
-                    case 'blocked':
-                        $tiempo = isset($_GET['time']) ? (int)$_GET['time'] : 30;
-                        echo "Cuenta bloqueada temporalmente. Por favor intente nuevamente en $tiempo minutos.";
-                        break;
-                    case 'invalid': 
-                        $intentos = isset($_GET['attempts']) ? (int)$_GET['attempts'] : 3;
-                        if ($intentos > 0) {
-                            echo "Contraseña incorrecta. Te quedan $intentos intentos antes de que tu cuenta sea bloqueada.";
-                        } else {
-                            echo "Contraseña incorrecta. Tu cuenta ha sido bloqueada por 30 minutos.";
+                        switch($_GET['error']) {
+                            case 'blocked':
+                                $tiempo = isset($_GET['time']) ? (int)$_GET['time'] : 3;
+                                echo "Cuenta bloqueada temporalmente. Por favor intente nuevamente en $tiempo minutos.";
+                                break;
+
+                            case 'credentials':
+                                $intentos = isset($_GET['attempts']) ? (int)$_GET['attempts'] : 3;
+                                if ($intentos > 0) {
+                                    echo "Credenciales incorrectas. Te quedan $intentos intentos antes de que tu cuenta sea bloqueada.";
+                                } else {
+                                    echo "Credenciales incorrectas. Tu cuenta ha sido bloqueada por 3 minutos.";
+                                }
+                                break;
+
+                            case 'notfound': 
+                                    echo "El correo electrónico no está registrado en nuestro sistema.";
+
+                            case 'db':
+                                echo "Error de conexión con el servidor. Por favor intente más tarde.";
+                                break;
+
+                            default:
+                                echo "Ocurrió un error al procesar su solicitud.";
                         }
-                        break;
-                    case 'notfound':  
-                        echo "El correo electrónico no está registrado en nuestro sistema.";
-                        break;
-                    case 'db':
-                        echo "Error de conexión con el servidor. Por favor intente más tarde.";
-                        break;
-                    default:
-                        echo "Ocurrió un error al procesar su solicitud.";
-                }
                     ?>
                 </div>
             <?php endif; ?>
