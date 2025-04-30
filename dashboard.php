@@ -1,3 +1,6 @@
+<?php 
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -11,24 +14,29 @@
     <!-- Navbar -->
 <!-- En dashboard.php, modificar el navbar -->
 <nav class="navbar">
+
     <a href="#" class="navbar-brand">
         <i class="fas fa-user-shield"></i> Panel de Administración
     </a>
+
     <div class="nav-links">
         <span class="welcome-message">
-            <i class="fas fa-user"></i> Bienvenido, <?php echo isset($_SESSION['nombre']) ? htmlspecialchars($_SESSION['nombre']) : 'Usuario'; ?>
+            <i class="fas fa-user"> Bienvenido, <?php echo isset($_SESSION['nombre']) ? htmlspecialchars($_SESSION['nombre']) : 'Usuario'; ?> </i>
         </span>
         <a href="conexion/dashboard_controller.php" class="nav-link active">
-            <i class="fas fa-gauge-high"></i> Resumen
-        </a>
+            <i class="fas fa-gauge-high">Resumen</i> 
+        </a
+
         <a href="dashboard-usuarios.html" class="nav-link">
-                <i class="fas fa-users-gear"></i> Usuarios
-            </a>
+                <i class="fas fa-users-gear"> Usuarios</i>
+        </a>
+         
             <a href="dashboard-alertas.html" class="nav-link">
-                <i class="fas fa-bell-exclamation"></i> Alertas
+                <i class="fas fa-bell-exclamation"> Alertas</i>
             </a>
-            <a href="inicio.html" class="nav-link">
-                <i class="fas fa-arrow-left"></i> Volver
+
+            <a href="inicio.php" class="nav-link">
+                <i class="fas fa-arrow-left">Volver</i> 
             </a>
     </div>
 </nav>
