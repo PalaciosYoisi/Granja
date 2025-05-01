@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_carrito'])) {
         $producto = $result->fetch_assoc();
         if ($producto['cantidad'] >= $cantidad) {
             // Verificar si ya está en el carrito
-            $stmt = $conexion->prepare("SELECT id_item, cantidad FROM carrito_compras WHERE id_usuario = ? AND id_producto = ?");
+            $stmt = $conexion->prepare("SELECT id_item, cantidad FROM carrito_compras WHERE id_cliente = ? AND id_producto = ?");
             $stmt->bind_param("ii", $_SESSION['cliente_id'], $id_producto);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_carrito'])) {
                 $stmt->execute();
             } else {
                 // Agregar nuevo item
-                $stmt = $conexion->prepare("INSERT INTO carrito_compras (id_usuario, id_producto, cantidad) VALUES (?, ?, ?)");
+                $stmt = $conexion->prepare("INSERT INTO carrito_compras (id_cliente, id_producto, cantidad) VALUES (?, ?, ?)");
                 $stmt->bind_param("iii", $_SESSION['cliente_id'], $id_producto, $cantidad);
                 $stmt->execute();
             }
