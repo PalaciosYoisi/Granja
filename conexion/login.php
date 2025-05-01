@@ -13,13 +13,8 @@ if (!$conexion) {
 $correo = mysqli_real_escape_string($conexion, $_POST['correo']);
 $clave = $_POST['clave'];
 
-// 3. Buscar usuario en la base de datos (ahora incluyendo el tipo de usuario)
-// En login.php, modificar la consulta SQL para incluir el nombre:
-    $sql_usuario = "SELECT id_usuario, clave, tipo_usuario, nombre FROM usuarios WHERE correo = '$correo' LIMIT 1";
-
-    // Y luego guardar el nombre en la sesión:
-    $_SESSION['nombre'] = $usuario['nombre'];
-
+// 3. Buscar usuario en la base de datos (incluyendo el tipo de usuario y nombre)
+$sql_usuario = "SELECT id_usuario, clave, tipo_usuario, nombre FROM usuarios WHERE correo = '$correo' LIMIT 1";
 $resultado = mysqli_query($conexion, $sql_usuario);
 
 if (mysqli_num_rows($resultado) == 1) {
@@ -65,19 +60,30 @@ if (mysqli_num_rows($resultado) == 1) {
         mysqli_query($conexion, "INSERT INTO log_accesos (id_usuario, exito) 
                                VALUES ($id_usuario, 1)");
         
-        // Iniciar sesión
+        // Iniciar sesión y guardar datos del usuario
         session_start();
         $_SESSION['usuario_id'] = $id_usuario;
         $_SESSION['correo'] = $correo;
         $_SESSION['tipo_usuario'] = $tipo_usuario;
+        $_SESSION['nombre'] = $usuario['nombre']; // <-- MOVIDO AQUÍ (después de definir $usuario)
         
         mysqli_close($conexion);
         
         // Redirigir según el tipo de usuario
         if ($tipo_usuario == 'Administrador') {
             header("Location: ../dashboard.php");
-        } else {
-            header("Location: ../inicio.php");
+        } 
+        else if ($tipo_usuario == 'Veterinario') {
+            header("Location: ../veterinario.php");
+        } 
+        else if ($tipo_usuario == 'Botánico') {
+            header("Location: ../botanico.php");
+        } 
+        else if ($tipo_usuario == 'Investigador') {
+            header("Location: ../investigador.php");
+        }
+        else {
+            echo "Usuario no reconocido. Por favor, contacta al administrador.";
         }
         exit();
     } else {
