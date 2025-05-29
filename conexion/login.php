@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 // 1. Conexión a la base de datos
 $conexion = mysqli_connect("localhost", "root", "", "granja");
 if (!$conexion) {
-    header("Location: ../index.php?error=db");
+    header("Location: ../iniciar_sesion.php?error=db");
     exit();
 }
 
@@ -93,7 +93,7 @@ if (mysqli_num_rows($resultado) == 1) {
 } else {
     // Usuario no existe
     mysqli_close($conexion);
-    header("Location: ../index.php?error=credentials");
+    header("Location: ../iniciar_sesion.php?error=credentials");
     exit();
 }
 
@@ -126,14 +126,14 @@ function manejarIntentoFallido($conexion, $id_usuario) {
                                VALUES ('usuario', 'Usuario ID $id_usuario bloqueado temporalmente', NOW())");
         
         mysqli_close($conexion);
-        header("Location: ../index.php?error=blocked&time=3");
+        header("Location: ../iniciar_sesion.php?error=blocked&time=3");
         exit();
     }
     
     // 4. Mostrar intentos restantes
     $intentos_restantes = 3 - $intentos_fallidos;
     mysqli_close($conexion);
-    header("Location: ../index.php?error=credentials&attempts=".$intentos_restantes);
+    header("Location: ../iniciar_sesion.php?error=credentials&attempts=".$intentos_restantes);
     exit();
 }
 ?>

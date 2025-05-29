@@ -4,7 +4,7 @@ require_once 'conexion/conexion.php';
 
 // Verificar sesión y rol
 if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'Investigador') {
-    header("Location: index.php");
+    header("Location: iniciar_sesion.php");
     exit();
 }
 
@@ -86,50 +86,27 @@ $especies_populares = $especies_populares_result ? $especies_populares_result->f
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
-            <nav class="col-md-2 d-none d-md-block sidebar py-3">
-                <div class="text-center mb-4">
-                    <h4 class="text-white">Granja San José</h4>
-                </div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">
-                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="animales.php">
-                            <i class="bi bi-egg-fried me-2"></i>Animales
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="plantas.php">
-                            <i class="bi bi-flower2 me-2"></i>Plantas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="especies.php">
-                            <i class="bi bi-diagram-3 me-2"></i>Especies
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="reportes.php">
-                            <i class="bi bi-clipboard-data me-2"></i>Reportes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="alertas.php">
-                            <i class="bi bi-exclamation-triangle me-2"></i>Alertas
-                        </a>
-                    </li>
-                    <li class="nav-item mt-4">
-                        <a class="nav-link text-danger" href="conexion/logout2.php">
-                            <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+              <!-- Sidebar -->
+    <?php
+    // Mostrar sidebar según el tipo de usuario
+    switch ($_SESSION['tipo_usuario']) {
+        case 'administrador':
+            include 'includes/sidebar_admin.php';
+            break;
+        case 'veterinario':
+            include 'includes/sidebar_veterinario.php';
+            break;
+        case 'empleado':
+            include 'includes/sidebar_investigador.php';
+            break;
+        // Agrega más casos según tus tipos de usuario
+        default:
+            include 'includes/sidebar.php';
+            break;
+    }
+    ?>  <!-- Sidebar -->
 
+            <?php include 'includes/sidebar_investigador.php'; ?>
             <!-- Main content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">

@@ -52,77 +52,83 @@ $tratamientos_recientes = $tratamientos_recientes_result ? $tratamientos_recient
     <title>Dashboard - Botánico</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        .sidebar {
-            min-height: 100vh;
-            background-color: #343a40;
-        }
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.75);
-        }
-        .sidebar .nav-link:hover {
-            color: rgba(255, 255, 255, 1);
-        }
-        .sidebar .nav-link.active {
-            color: white;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        .stat-card {
-            border-left: 4px solid #0d6efd;
-            transition: transform 0.2s;
-        }
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-        .alert-item {
-            border-left: 3px solid #0d6efd;
-        }
-        .alert-item.critical {
-            border-left-color: #dc3545;
-        }
-    </style>
+            <style>
+                .sidebar {
+                    min-height: 100vh;
+                    background-color: #343a40;
+                }
+                .sidebar .nav-link {
+                    color: rgba(255, 255, 255, 0.75);
+                }
+                .sidebar .nav-link:hover {
+                    color: rgba(255, 255, 255, 1);
+                }
+                .sidebar .nav-link.active {
+                    color: white;
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+                .stat-card {
+                    border-left: 4px solid #0d6efd;
+                    transition: transform 0.2s;
+                }
+                .stat-card:hover {
+                    transform: translateY(-5px);
+                }
+                .alert-item {
+                    border-left: 3px solid #0d6efd;
+                }
+                .alert-item.critical {
+                    border-left-color: #dc3545;
+                }
+                .treatment-card {
+                    border-left: 4px solid #28a745;
+                    transition: all 0.3s ease;
+                }
+                .treatment-card:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                }
+                .badge-success {
+                    background-color: #28a745;
+                }
+                .badge-warning {
+                    background-color: #ffc107;
+                }
+                .badge-danger {
+                    background-color: #dc3545;
+                }
+                .filter-buttons .btn {
+                    margin-right: 5px;
+                    margin-bottom: 5px;
+                }
+                .quick-actions .btn {
+                    margin-bottom: 10px;
+                }
+            </style>
 </head>
 <body>
     <div class="container-fluid">
         <div class="row">
+
             <!-- Sidebar -->
-            <nav class="col-md-2 d-none d-md-block sidebar py-3">
-                <div class="text-center mb-4">
-                    <h4 class="text-white">Granja San José</h4>
-                </div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">
-                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="plantas.php">
-                            <i class="bi bi-flower2 me-2"></i>Plantas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="tratamientos.php">
-                            <i class="bi bi-clipboard-pulse me-2"></i>Tratamientos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="inventario.php">
-                            <i class="bi bi-box-seam me-2"></i>Inventario
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="alertas.php">
-                            <i class="bi bi-exclamation-triangle me-2"></i>Alertas
-                        </a>
-                    </li>
-                    <li class="nav-item mt-4">
-                        <a class="nav-link text-danger" href="conexion/logout2.php">
-                            <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+            <?php
+            // Mostrar sidebar según el tipo de usuario
+            switch ($_SESSION['tipo_usuario']) {
+                case 'administrador':
+                    include 'includes/sidebar_admin.php';
+                    break;
+                case 'veterinario':
+                    include 'includes/sidebar_veterinario.php';
+                    break;
+                case 'empleado':
+                    include 'includes/sidebar_investigador.php';
+                    break;
+                // Agrega más casos según tus tipos de usuario
+                default:
+                    include 'includes/sidebar.php';
+                    break;
+            }
+            ?>
 
             <!-- Main content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">

@@ -4,7 +4,7 @@ require_once 'conexion/conexion.php';
 
 // Verificar sesión y rol
 if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'Administrador') {
-    header("Location: index.php");
+    header("Location: iniciar_sesion.php");
     exit();
 }
 
@@ -52,96 +52,146 @@ $ventas_recientes = $ventas_recientes_result ? $ventas_recientes_result->fetch_a
     <title>Dashboard - Administrador</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
+<style>
+    :root {
+        --primary-color: #4CAF50;
+        --primary-dark: #388E3C;
+        --primary-light: #C8E6C9;
+        --secondary-color: #8BC34A;
+        --accent-color: #FFC107;
+        --text-dark: #333;
+        --text-light: #f5f5f5;
+        --bg-light: #f9f9f9;
+        --bg-dark: #2E7D32;
+        --border-radius: 8px;
+        --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--bg-light);
+        color: var(--text-dark);
+        line-height: 1.6;
+    }
+
+    /* Sidebar styles */
+    .sidebar {
+        min-height: 100vh;
+        background-color: var(--bg-dark);
+        padding: 20px 0;
+    }
+
+    .sidebar .nav-link {
+        color: rgba(255, 255, 255, 0.75);
+        padding: 10px 15px;
+        margin: 0 10px 5px 10px;
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+    }
+
+    .sidebar .nav-link:hover {
+        color: rgba(255, 255, 255, 1);
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar .nav-link.active {
+        color: white;
+        background-color: var(--primary-color);
+    }
+
+    .sidebar .nav-link i {
+        margin-right: 10px;
+    }
+
+    /* Main content */
+    main {
+        padding: 20px;
+    }
+
+    /* Stats Cards */
+    .stat-card {
+        background-color: white;
+        border-left: 4px solid var(--primary-color);
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        transition: var(--transition);
+        padding: 15px;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+
+    /* Alerts */
+    .alert-item {
+        background-color: white;
+        border-left: 3px solid var(--primary-color);
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+    }
+
+    .alert-item.critical {
+        border-left-color: #dc3545;
+    }
+
+    /* Tables */
+    .table-responsive {
+        max-height: 400px;
+        overflow-y: auto;
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 15px;
+    }
+
+    /* Page header */
+    .border-bottom {
+        border-bottom: 1px solid #dee2e6 !important;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
         .sidebar {
-            min-height: 100vh;
-            background-color: #343a40;
+            min-height: auto;
+            position: relative;
         }
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.75);
-        }
-        .sidebar .nav-link:hover {
-            color: rgba(255, 255, 255, 1);
-        }
-        .sidebar .nav-link.active {
-            color: white;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
+        
         .stat-card {
-            border-left: 4px solid #0d6efd;
-            transition: transform 0.2s;
+            margin-bottom: 15px;
         }
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-        .alert-item {
-            border-left: 3px solid #0d6efd;
-        }
-        .alert-item.critical {
-            border-left-color: #dc3545;
-        }
-        .table-responsive {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
-            <nav class="col-md-2 d-none d-md-block sidebar py-3">
-                <div class="text-center mb-4">
-                    <h4 class="text-white">Granja San José</h4>
-                </div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">
-                            <i class="bi bi-speedometer2 me-2"></i>Dashboard - Administrador
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="animales.php">
-                            <i class="bi bi-egg-fried me-2"></i>Animales
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="plantas.php">
-                            <i class="bi bi-flower2 me-2"></i>Plantas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="inventario.php">
-                            <i class="bi bi-box-seam me-2"></i>Inventario
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="ventas.php">
-                            <i class="bi bi-cash-coin me-2"></i>Ventas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="alertas.php">
-                            <i class="bi bi-exclamation-triangle me-2"></i>Alertas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="reportes.php">
-                            <i class="bi bi-clipboard-data me-2"></i>Reportes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="usuarios.php">
-                            <i class="bi bi-people me-2"></i>Usuarios
-                        </a>
-                    </li>
-                    <li class="nav-item mt-4">
-                        <a class="nav-link text-danger" href="conexion/logout2.php">
-                            <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+    <!-- Sidebar -->
+            <?php
+            // Mostrar sidebar según el tipo de usuario
+            switch ($_SESSION['tipo_usuario']) {
+                case 'administrador':
+                    include 'includes/sidebar_admin.php';
+                    break;
+                case 'veterinario':
+                    include 'includes/sidebar_veterinario.php';
+                    break;
+                case 'empleado':
+                    include 'includes/sidebar_investigador.php';
+                    break;
+                // Agrega más casos según tus tipos de usuario
+                default:
+                    include 'includes/sidebar.php';
+                    break;
+            }
+            ?>
 
             <!-- Main content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
