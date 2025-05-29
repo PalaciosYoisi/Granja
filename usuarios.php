@@ -2,11 +2,7 @@
 session_start();
 require_once 'conexion/conexion.php';
 
-// Verificar sesión y rol
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: iniciar_sesion.php");
-    exit();
-}
+
 
 // Conexión a la base de datos
 $conexion = new Conexion();

@@ -2,12 +2,6 @@
 session_start();
 require_once 'conexion/conexion.php';
 
-// Verificar sesión y rol
-if (!isset($_SESSION['id_usuario']) || $_SESSION['tipo_usuario'] != 'Administrador') {
-    header("Location: iniciar_sesion.php");
-    exit();
-}
-
 // Conexión a la base de datos
 $conexion = new Conexion();
 $db = $conexion->getConexion();
@@ -66,362 +60,364 @@ $categorias = $categorias_result ? $categorias_result->fetch_all(MYSQLI_ASSOC) :
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --color-primary: #6c5ce7;
-            --color-secondary: #a29bfe;
-            --color-success: #00b894;
-            --color-info: #0984e3;
-            --color-warning: #fdcb6e;
-            --color-danger: #d63031;
-            --color-light: #f8f9fa;
-            --color-dark: #343a40;
-            --color-text: #2d3436;
-            --color-bg: #f5f6fa;
-        }
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--color-bg);
-            color: var(--color-text);
-        }
-        
+<style>
+    :root {
+        --primary-color: #4CAF50;
+        --primary-dark: #388E3C;
+        --primary-light: #C8E6C9;
+        --secondary-color: #8BC34A;
+        --accent-color: #FFC107;
+        --text-dark: #333;
+        --text-light: #f5f5f5;
+        --bg-light: #f9f9f9;
+        --bg-dark: #2E7D32;
+        --border-radius: 8px;
+        --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--bg-light);
+        color: var(--text-dark);
+        line-height: 1.6;
+    }
+
+    .sidebar {
+        min-height: 100vh;
+        background-color: var(--bg-dark);
+        color: white;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+        border-radius: var(--border-radius);
+        margin: 5px 10px;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+    }
+
+    .sidebar .nav-link:hover {
+        color: white;
+        background-color: rgba(255, 255, 255, 0.1);
+        transform: translateX(5px);
+    }
+
+    .sidebar .nav-link.active {
+        color: white;
+        background-color: var(--primary-color);
+        font-weight: 500;
+        transform: translateX(5px);
+    }
+
+    .sidebar .nav-link i {
+        width: 20px;
+        text-align: center;
+        margin-right: 10px;
+    }
+
+    .main-content {
+        padding: 30px;
+        background-color: var(--bg-light);
+    }
+
+    .header {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .alert-card {
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        transition: var(--transition);
+        margin-bottom: 20px;
+        overflow: hidden;
+        border: none;
+        position: relative;
+        background-color: white;
+    }
+
+    .alert-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--card-color-1), var(--card-color-2));
+    }
+
+    .alert-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+
+    .alert-card.unread {
+        border-left: 5px solid var(--primary-color);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+    }
+
+    .alert-icon {
+        font-size: 1.8rem;
+        background: linear-gradient(135deg, var(--card-color-1), var(--card-color-2));
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-right: 15px;
+    }
+
+    .alert-category {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 50px;
+        background: linear-gradient(135deg, var(--card-color-1), var(--card-color-2));
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .alert-time {
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    .alert-priority {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
+
+    .priority-baja { background-color: var(--primary-color); }
+    .priority-media { background-color: var(--secondary-color); }
+    .priority-alta { background-color: var(--accent-color); }
+    .priority-critica { background-color: #f44336; animation: blink 1s infinite; }
+
+    @keyframes blink {
+        50% { opacity: 0.5; }
+    }
+
+    .filter-btn {
+        border: none;
+        background: white;
+        color: var(--text-dark);
+        border-radius: 50px;
+        padding: 8px 15px;
+        margin: 5px;
+        box-shadow: var(--box-shadow);
+        transition: var(--transition);
+        font-weight: 500;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    }
+
+    .stats-card {
+        border-radius: var(--border-radius);
+        padding: 20px;
+        color: white;
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--box-shadow);
+        transition: var(--transition);
+    }
+
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .stats-card::after {
+        content: '';
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .stats-card.total { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); }
+    .stats-card.unread { background: linear-gradient(135deg, #f44336, #d32f2f); }
+    .stats-card.today { background: linear-gradient(135deg, #00bcd4, #0097a7); }
+    .stats-card.critical { background: linear-gradient(135deg, #ff5722, #e64a19); }
+
+    .stats-icon {
+        font-size: 2.5rem;
+        opacity: 0.3;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }
+
+    .pagination .page-item .page-link {
+        border: none;
+        color: var(--text-dark);
+        border-radius: 50% !important;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 5px;
+        transition: var(--transition);
+    }
+
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+    }
+
+    .pagination .page-item:not(.active) .page-link:hover {
+        background: rgba(76, 175, 80, 0.1);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+    }
+
+    .empty-state i {
+        font-size: 5rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+    }
+
+    .mark-all-btn {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border: none;
+        border-radius: 50px;
+        padding: 10px 20px;
+        color: white;
+        font-weight: 500;
+        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        transition: var(--transition);
+    }
+
+    .mark-all-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+    }
+
+    /* Asignar colores dinámicos según categoría */
+    .animal {
+        --card-color-1: #4CAF50;
+        --card-color-2: #8BC34A;
+    }
+
+    .planta {
+        --card-color-1: #8BC34A;
+        --card-color-2: #CDDC39;
+    }
+
+    .venta {
+        --card-color-1: #2196F3;
+        --card-color-2: #64B5F6;
+    }
+
+    .empleado {
+        --card-color-1: #FFC107;
+        --card-color-2: #FFD54F;
+    }
+
+    .usuario {
+        --card-color-1: #9C27B0;
+        --card-color-2: #BA68C8;
+    }
+
+    .inventario {
+        --card-color-1: #607D8B;
+        --card-color-2: #90A4AE;
+    }
+
+    .salud {
+        --card-color-1: #00BCD4;
+        --card-color-2: #80DEEA;
+    }
+
+    .vacunas {
+        --card-color-1: #FF5722;
+        --card-color-2: #FF8A65;
+    }
+
+    /* Animaciones */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+    @media (max-width: 768px) {
         .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #2c3e50, #4ca1af);
-            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.8);
-            border-radius: 5px;
-            margin: 5px 10px;
-            transition: all 0.3s;
-        }
-        
-        .sidebar .nav-link:hover {
-            color: white;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(5px);
-        }
-        
-        .sidebar .nav-link.active {
-            color: white;
-            background: rgba(255, 255, 255, 0.2);
-            font-weight: 500;
-            transform: translateX(5px);
-        }
-        
-        .sidebar .nav-link i {
-            width: 20px;
-            text-align: center;
-            margin-right: 10px;
+            width: 100%;
+            min-height: auto;
+            position: relative;
         }
         
         .main-content {
-            padding: 30px;
-        }
-        
-        .header {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .alert-card {
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            margin-bottom: 20px;
-            overflow: hidden;
-            border: none;
-            position: relative;
-        }
-        
-        .alert-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 5px;
-            height: 100%;
-            background: linear-gradient(to bottom, var(--card-color-1), var(--card-color-2));
-        }
-        
-        .alert-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .alert-card.unread {
-            border-left: 5px solid var(--color-primary);
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(108, 92, 231, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0); }
-        }
-        
-        .alert-icon {
-            font-size: 1.8rem;
-            background: linear-gradient(135deg, var(--card-color-1), var(--card-color-2));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-right: 15px;
-        }
-        
-        .alert-category {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 3px 10px;
-            border-radius: 50px;
-            background: linear-gradient(135deg, var(--card-color-1), var(--card-color-2));
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .alert-time {
-            font-size: 0.8rem;
-            color: #7f8c8d;
-        }
-        
-        .alert-priority {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 5px;
-        }
-        
-        .priority-baja { background-color: var(--color-success); }
-        .priority-media { background-color: var(--color-info); }
-        .priority-alta { background-color: var(--color-warning); }
-        .priority-critica { background-color: var(--color-danger); animation: blink 1s infinite; }
-        
-        @keyframes blink {
-            50% { opacity: 0.5; }
-        }
-        
-        .filter-btn {
-            border: none;
-            background: white;
-            color: var(--color-text);
-            border-radius: 50px;
-            padding: 8px 15px;
-            margin: 5px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-        
-        .filter-btn:hover, .filter-btn.active {
-            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+            margin-left: 0;
+            padding: 15px;
         }
         
         .stats-card {
-            border-radius: 15px;
-            padding: 20px;
-            color: white;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
+            margin-bottom: 15px;
         }
-        
-        .stats-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        }
-        
-        .stats-card::after {
-            content: '';
-            position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .stats-card.total { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
-        .stats-card.unread { background: linear-gradient(135deg, #fd79a8, #e84393); }
-        .stats-card.today { background: linear-gradient(135deg, #00cec9, #00b894); }
-        .stats-card.critical { background: linear-gradient(135deg, #ff7675, #d63031); }
-        
-        .stats-icon {
-            font-size: 2.5rem;
-            opacity: 0.3;
-            position: absolute;
-            top: 20px;
-            right: 20px;
-        }
-        
-        .pagination .page-item .page-link {
-            border: none;
-            color: var(--color-text);
-            border-radius: 50% !important;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 5px;
-            transition: all 0.3s;
-        }
-        
-        .pagination .page-item.active .page-link {
-            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-            color: white;
-        }
-        
-        .pagination .page-item:not(.active) .page-link:hover {
-            background: rgba(108, 92, 231, 0.1);
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 50px 20px;
-        }
-        
-        .empty-state i {
-            font-size: 5rem;
-            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-        }
-        
-        .mark-all-btn {
-            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-            border: none;
-            border-radius: 50px;
-            padding: 10px 20px;
-            color: white;
-            font-weight: 500;
-            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
-            transition: all 0.3s;
-        }
-        
-        .mark-all-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
-        }
-        
-        /* Asignar colores dinámicos según categoría */
-        .animal {
-            --card-color-1: #6c5ce7;
-            --card-color-2: #a29bfe;
-        }
-        
-        .planta {
-            --card-color-1: #00b894;
-            --card-color-2: #55efc4;
-        }
-        
-        .venta {
-            --card-color-1: #0984e3;
-            --card-color-2: #74b9ff;
-        }
-        
-        .empleado {
-            --card-color-1: #fdcb6e;
-            --card-color-2: #ffeaa7;
-        }
-        
-        .usuario {
-            --card-color-1: #e84393;
-            --card-color-2: #fd79a8;
-        }
-        
-        .inventario {
-            --card-color-1: #636e72;
-            --card-color-2: #b2bec3;
-        }
-        
-        .salud {
-            --card-color-1: #00cec9;
-            --card-color-2: #81ecec;
-        }
-        
-        .vacunas {
-            --card-color-1: #e17055;
-            --card-color-2: #fab1a0;
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <nav class="col-md-2 d-none d-md-block sidebar py-4">
-                <div class="text-center mb-5">
-                    <h4 class="text-white"><i class="fas fa-leaf me-2"></i>Granja San José</h4>
-                </div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="dashboard.php">
-                            <i class="fas fa-tachometer-alt"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="animales.php">
-                            <i class="fas fa-paw"></i> Animales
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="plantas.php">
-                            <i class="fas fa-leaf"></i> Plantas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="inventario.php">
-                            <i class="fas fa-box-open"></i> Inventario
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="ventas.php">
-                            <i class="fas fa-shopping-cart"></i> Ventas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="alertas.php">
-                            <i class="fas fa-bell"></i> Alertas
-                            <?php if ($alertas_no_leidas > 0): ?>
-                                <span class="badge bg-danger rounded-pill float-end"><?= $alertas_no_leidas ?></span>
-                            <?php endif; ?>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="reportes.php">
-                            <i class="fas fa-chart-bar"></i> Reportes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="usuarios.php">
-                            <i class="fas fa-users"></i> Usuarios
-                        </a>
-                    </li>
-                    <li class="nav-item mt-5">
-                        <a class="nav-link text-white" href="../conexion/logout2.php">
-                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-
+            
+                       <?php
+            // Mostrar sidebar según el tipo de usuario
+            switch ($_SESSION['tipo_usuario']) {
+                case 'Administrador':
+                    include 'includes/sidebar_admin.php';
+                    break;
+                case 'Veterinario':
+                    include 'includes/sidebar_veterinario.php';
+                    break;
+                case 'Investigador':
+                    include 'includes/sidebar_investigador.php';
+                    break;
+                // Agrega más casos según tus tipos de usuario
+                default:
+                    include 'includes/sidebar.php';
+                    break;
+            }
+            ?>
             <!-- Main content -->
             <main class="col-md-10 main-content">
                 <div class="header">
@@ -620,15 +616,10 @@ $categorias = $categorias_result ? $categorias_result->fetch_all(MYSQLI_ASSOC) :
             $('.alert-card').click(function() {
                 if ($(this).hasClass('unread')) {
                     $(this).removeClass('unread');
-                    
-                    // Aquí podrías agregar AJAX para marcar como leída en la base de datos
-                    // $.post('marcar_leida.php', { id: alertaId }, function(response) {
-                    //     console.log('Alerta marcada como leída');
-                    // });
+
                 }
             });
-            
-            // Efecto hover en las tarjetas de filtro
+
             $('.filter-btn').hover(
                 function() {
                     if (!$(this).hasClass('active')) {

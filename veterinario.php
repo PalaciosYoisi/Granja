@@ -2,12 +2,6 @@
 session_start();
 require_once 'conexion/conexion.php';
 
-// Verificar sesión y rol
-if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'Veterinario') {
-    header("Location: index.php");
-    exit();
-}
-
 // Conexión a la base de datos
 $conexion = new Conexion();
 $db = $conexion->getConexion();
@@ -335,22 +329,22 @@ $proximas_vacunas = $proximas_vacunas_result ? $proximas_vacunas_result->fetch_a
     <!-- Sidebar -->
     <?php
     // Mostrar sidebar según el tipo de usuario
-    switch ($_SESSION['tipo_usuario']) {
-        case 'administrador':
-            include 'includes/sidebar_admin.php';
-            break;
-        case 'veterinario':
-            include 'includes/sidebar_veterinario.php';
-            break;
-        case 'empleado':
-            include 'includes/sidebar_investigador.php';
-            break;
-        // Agrega más casos según tus tipos de usuario
-        default:
-            include 'includes/sidebar.php';
-            break;
-    }
-    ?>
+            switch ($_SESSION['tipo_usuario']) {
+                case 'Administrador':
+                    include 'includes/sidebar_admin.php';
+                    break;
+                case 'Veterinario':
+                    include 'includes/sidebar_veterinario.php';
+                    break;
+                case 'Investigador':
+                    include 'includes/sidebar_investigador.php';
+                    break;
+                // Agrega más casos según tus tipos de usuario
+                default:
+                    include 'includes/sidebar.php';
+                    break;
+            }
+        ?>
             <!-- Main content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">

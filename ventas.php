@@ -2,11 +2,6 @@
 session_start();
 require_once 'conexion/conexion.php';
 
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: iniciar_sesion.php");
-    exit();
-}
-
 $conexion = new Conexion();
 $db = $conexion->getConexion();
 
@@ -559,22 +554,22 @@ $clientes = $db->query("SELECT * FROM clientes")->fetch_all(MYSQLI_ASSOC);
     <!-- Sidebar -->
     <?php
     // Mostrar sidebar según el tipo de usuario
-    switch ($_SESSION['tipo_usuario']) {
-        case 'administrador':
-            include 'includes/sidebar_admin.php';
-            break;
-        case 'veterinario':
-            include 'includes/sidebar_veterinario.php';
-            break;
-        case 'empleado':
-            include 'includes/sidebar_investigador.php';
-            break;
-        // Agrega más casos según tus tipos de usuario
-        default:
-            include 'includes/sidebar.php';
-            break;
-    }
-    ?>
+            switch ($_SESSION['tipo_usuario']) {
+                case 'Administrador':
+                    include 'includes/sidebar_admin.php';
+                    break;
+                case 'Veterinario':
+                    include 'includes/sidebar_veterinario.php';
+                    break;
+                case 'Investigador':
+                    include 'includes/sidebar_investigador.php';
+                    break;
+                // Agrega más casos según tus tipos de usuario
+                default:
+                    include 'includes/sidebar.php';
+                    break;
+            }
+            ?>
 
     <div class="main-content">
         <header>

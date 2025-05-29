@@ -74,20 +74,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_carrito'])) {
     <link rel="stylesheet" href="css/estilos.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-        
-        .product-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            transition: transform 0.3s;
-            background: white;
-        }
+
+        /* Agregar/modificar estos estilos en estilos.css */
+
+/* Estilo para el contenedor principal de productos */
+.product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    overflow-x: auto; /* Permite scroll horizontal si hay muchos productos */
+    scrollbar-width: thin; /* Para navegadores modernos */
+    scrollbar-color: var(--secondary-color) var(--light-color);
+}
+
+/* Estilo para la barra de scroll */
+.product-grid::-webkit-scrollbar {
+    height: 8px;
+}
+
+.product-grid::-webkit-scrollbar-track {
+    background: var(--light-color);
+    border-radius: 10px;
+}
+
+.product-grid::-webkit-scrollbar-thumb {
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+}
+
+/* Estilo para las tarjetas de producto */
+.product-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    transition: transform 0.3s;
+    background: white;
+    min-width: 250px; /* Ancho mínimo para cada tarjeta */
+    flex: 0 0 auto; /* Evita que las tarjetas se estiren */
+    box-shadow: var(--box-shadow);
+}
+
+/* Estilo para los títulos de categoría */
+.category-title {
+    width: 100%;
+    font-size: 1.5em;
+    margin-top: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--accent-color);
+    color: var(--primary-color);
+}
         
         .product-card:hover {
             transform: translateY(-5px);
@@ -227,8 +263,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_carrito'])) {
                     <i class="fas fa-<?= 
                         $producto['categoria'] == 'Huevos' ? 'egg' : 
                         ($producto['categoria'] == 'Leche' ? 'wine-bottle' : 
-                        ($producto['categoria'] == 'Carne' ? 'drumstick-bite' : 
-                        ($producto['categoria'] == 'Pollo' ? 'drumstick' : 
+                        ($producto['categoria'] == 'Carne' ? 'drumsticke' : 
+                        ($producto['categoria'] == 'Pollo' ? 'drumstick-bit' : 
                         ($producto['categoria'] == 'Frutas' ? 'apple-alt' : 'carrot')))) 
                     ?>"></i>
                 </div>

@@ -2,10 +2,6 @@
 session_start();
 require_once 'conexion/conexion.php';
 
-if (!isset($_SESSION['id_usuario'])) {
-    header("Location: index.php");
-    exit();
-}
 
 $conexion = new Conexion();
 $db = $conexion->getConexion();
@@ -697,29 +693,29 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : 'inventario';
     <!-- Sidebar -->
     <?php
     // Mostrar sidebar según el tipo de usuario
-    switch ($_SESSION['tipo_usuario']) {
-        case 'administrador':
-            include 'includes/sidebar_admin.php';
-            break;
-        case 'veterinario':
-            include 'includes/sidebar_veterinario.php';
-            break;
-        case 'empleado':
-            include 'includes/sidebar_investigador.php';
-            break;
-        // Agrega más casos según tus tipos de usuario
-        default:
-            include 'includes/sidebar.php';
-            break;
-    }
-    ?>
+            switch ($_SESSION['tipo_usuario']) {
+                case 'Administrador':
+                    include 'includes/sidebar_admin.php';
+                    break;
+                case 'Veterinario':
+                    include 'includes/sidebar_veterinario.php';
+                    break;
+                case 'Investigador':
+                    include 'includes/sidebar_investigador.php';
+                    break;
+                // Agrega más casos según tus tipos de usuario
+                default:
+                    include 'includes/sidebar.php';
+                    break;
+            }
+        ?>
 
     <div class="main-content">
         <header>
             <div class="container header-content">
                 <div class="logo">
                     <i class="fas fa-leaf"></i>
-                    <h1>Granja Verde</h1>
+                    <h1>Granja San josé</h1>
                 </div>
                 <div class="user-info">
                     <span>Bienvenido, <?php echo $_SESSION['nombre']; ?></span>

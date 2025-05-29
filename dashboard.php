@@ -2,11 +2,6 @@
 session_start();
 require_once 'conexion/conexion.php';
 
-// Verificar sesión y rol
-if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'Administrador') {
-    header("Location: iniciar_sesion.php");
-    exit();
-}
 
 // Conexión a la base de datos
 $conexion = new Conexion();
@@ -177,13 +172,13 @@ $ventas_recientes = $ventas_recientes_result ? $ventas_recientes_result->fetch_a
             <?php
             // Mostrar sidebar según el tipo de usuario
             switch ($_SESSION['tipo_usuario']) {
-                case 'administrador':
+                case 'Administrador':
                     include 'includes/sidebar_admin.php';
                     break;
-                case 'veterinario':
+                case 'Veterinario':
                     include 'includes/sidebar_veterinario.php';
                     break;
-                case 'empleado':
+                case 'Investigador':
                     include 'includes/sidebar_investigador.php';
                     break;
                 // Agrega más casos según tus tipos de usuario

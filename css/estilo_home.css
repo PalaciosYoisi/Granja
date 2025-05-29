@@ -1,15 +1,16 @@
 /* =============================
    Granja Ecológica San José - Estilo Actualizado
-   Versión mejorada para legibilidad y navbar fijo
+   Versión mejorada para legibilidad y contraste
    ============================= */
 
-   :root {
+:root {
     --primary-color: #2e7d32; /* Verde principal vibrante */
     --secondary-color: #4caf50; /* Verde secundario */
     --accent-color: #ff9800; /* Naranja acento */
     --light-color: #f8f9fa; /* Fondo claro */
     --dark-color: #212121; /* Texto oscuro mejorado */
-    --text-color: #333333; /* Color de texto principal */
+    --text-color: #444444; /* Color de texto principal más oscuro */
+    --text-light: #666666; /* Texto secundario */
     --border-radius: 16px; /* Bordes redondeados */
     --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Sombra suave */
     --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transición suave */
@@ -37,7 +38,7 @@ h1, h2, h3, h4 {
 
 /* ===== NAVBAR MEJORADO ===== */
 .navbar {
-    background: white !important; /* Fondo blanco sólido */
+    background: white !important;
     padding: 1rem 2.5rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -80,12 +81,11 @@ h1, h2, h3, h4 {
     color: var(--dark-color);
     text-decoration: none;
     font-weight: 600;
-    padding: 0.6rem 1.2rem;
+    padding: 0.6rem 0.8rem;
     border-radius: 8px;
     transition: var(--transition);
     font-size: 1rem;
     white-space: nowrap;
-    padding: 0.6rem 0.8rem; /* Reduce el padding horizontal (antes 1.2rem) */
     margin: 0 0.1rem;
 }
 
@@ -113,7 +113,7 @@ h1, h2, h3, h4 {
     text-align: center;
     padding: 0 1.5rem;
     color: white;
-    margin-top: -80px; /* Compensa el navbar fijo */
+    margin-top: -80px;
 }
 
 .hero-content {
@@ -229,13 +229,13 @@ h1, h2, h3, h4 {
 }
 
 .product-card h3 {
-    color: var(--primary-color); /* Cambia a este color o usa #2e7d32 */
+    color: var(--primary-color);
     margin-bottom: 1.2rem;
     font-size: 1.4rem;
 }
 
 .product-card p {
-    color: var(--text-color);
+    color: var(--text-light);
     font-size: 0.95rem;
     line-height: 1.6;
 }
@@ -403,6 +403,12 @@ textarea {
     font-family: 'Open Sans', sans-serif;
     transition: var(--transition);
     font-size: 1rem;
+    color: var(--text-color);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #999;
 }
 
 input:focus,
@@ -464,7 +470,7 @@ button.btn:hover {
 
 .footer-section p,
 .footer-section a {
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.9);
     transition: var(--transition);
     line-height: 1.6;
 }
@@ -506,7 +512,7 @@ button.btn:hover {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     margin-top: 2rem;
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.8);
 }
 
 /* Animaciones */

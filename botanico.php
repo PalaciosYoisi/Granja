@@ -2,11 +2,6 @@
 session_start();
 require_once 'conexion/conexion.php';
 
-// Verificar sesión y rol
-if (!isset($_SESSION['id_usuario']) || $_SESSION['tipo_usuario'] != 'Botánico') {
-    header("Location: iniciar_sesion.php");
-    exit();
-}
 
 // Conexión a la base de datos
 $conexion = new Conexion();
@@ -53,57 +48,230 @@ $tratamientos_recientes = $tratamientos_recientes_result ? $tratamientos_recient
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
             <style>
-                .sidebar {
-                    min-height: 100vh;
-                    background-color: #343a40;
-                }
-                .sidebar .nav-link {
-                    color: rgba(255, 255, 255, 0.75);
-                }
-                .sidebar .nav-link:hover {
-                    color: rgba(255, 255, 255, 1);
-                }
-                .sidebar .nav-link.active {
-                    color: white;
-                    background-color: rgba(255, 255, 255, 0.1);
-                }
-                .stat-card {
-                    border-left: 4px solid #0d6efd;
-                    transition: transform 0.2s;
-                }
-                .stat-card:hover {
-                    transform: translateY(-5px);
-                }
-                .alert-item {
-                    border-left: 3px solid #0d6efd;
-                }
-                .alert-item.critical {
-                    border-left-color: #dc3545;
-                }
-                .treatment-card {
-                    border-left: 4px solid #28a745;
-                    transition: all 0.3s ease;
-                }
-                .treatment-card:hover {
-                    transform: translateY(-3px);
-                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-                }
-                .badge-success {
-                    background-color: #28a745;
-                }
-                .badge-warning {
-                    background-color: #ffc107;
-                }
-                .badge-danger {
-                    background-color: #dc3545;
-                }
-                .filter-buttons .btn {
-                    margin-right: 5px;
-                    margin-bottom: 5px;
-                }
-                .quick-actions .btn {
-                    margin-bottom: 10px;
-                }
+/* botanico.css */
+:root {
+    --primary-color: #4CAF50;
+    --primary-dark: #388E3C;
+    --primary-light: #C8E6C9;
+    --secondary-color: #8BC34A;
+    --accent-color: #FFC107;
+    --text-dark: #333;
+    --text-light: #f5f5f5;
+    --bg-light: #f9f9f9;
+    --bg-dark: #2E7D32;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+.sidebar {
+    background-color: var(--bg-dark);
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+.sidebar .nav-link {
+    color: rgba(255,255,255,0.8);
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+}
+
+.sidebar .nav-link:hover {
+    color: white;
+    background-color: rgba(255,255,255,0.1);
+}
+
+.sidebar .nav-link.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.stat-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: var(--transition);
+    border-left: 4px solid var(--primary-color);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.alert-item {
+    background-color: white;
+    border-radius: var(--border-radius);
+    margin-bottom: 10px;
+    padding: 15px;
+    border-left: 3px solid var(--primary-color);
+    transition: var(--transition);
+}
+
+.alert-item.critical {
+    border-left-color: #C62828;
+}
+
+.treatment-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 15px;
+    margin-bottom: 15px;
+    border-left: 4px solid var(--secondary-color);
+    transition: var(--transition);
+}
+
+.treatment-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btn-outline-primary {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.bg-success {
+    background-color: #C8E6C9;
+    color: #2E7D32;
+}
+
+.bg-danger {
+    background-color: #FFCDD2;
+    color: #C62828;
+}
+
+.bg-warning {
+    background-color: #FFF9C4;
+    color: #F57F17;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.table th {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+.table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-bottom: 20px;
+    transition: var(--transition);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.list-group {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-group-item {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    transition: var(--transition);
+}
+
+.list-group-item:hover {
+    background-color: #f9f9f9;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+    }
+    
+    .table {
+        display: block;
+        overflow-x: auto;
+    }
+}
             </style>
 </head>
 <body>
@@ -114,13 +282,13 @@ $tratamientos_recientes = $tratamientos_recientes_result ? $tratamientos_recient
             <?php
             // Mostrar sidebar según el tipo de usuario
             switch ($_SESSION['tipo_usuario']) {
-                case 'administrador':
+                case 'Administrador':
                     include 'includes/sidebar_admin.php';
                     break;
-                case 'veterinario':
+                case 'Veterinario':
                     include 'includes/sidebar_veterinario.php';
                     break;
-                case 'empleado':
+                case 'Investigador':
                     include 'includes/sidebar_investigador.php';
                     break;
                 // Agrega más casos según tus tipos de usuario

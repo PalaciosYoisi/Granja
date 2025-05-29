@@ -2,12 +2,6 @@
 session_start();
 require_once 'conexion/conexion.php';
 
-// Verificar sesión y rol
-if (!isset($_SESSION['idusuario']) || $_SESSION['tipo_usuario'] != 'Investigador') {
-    header("Location: iniciar_sesion.php");
-    exit();
-}
-
 // Conexión a la base de datos
 $conexion = new Conexion();
 $db = $conexion->getConexion();
@@ -53,35 +47,239 @@ $especies_populares = $especies_populares_result ? $especies_populares_result->f
     <title>Dashboard - Investigador</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
+<style>
+    :root {
+        --primary-color: #4CAF50;
+        --primary-dark: #388E3C;
+        --primary-light: #C8E6C9;
+        --secondary-color: #8BC34A;
+        --accent-color: #FFC107;
+        --text-dark: #333;
+        --text-light: #f5f5f5;
+        --bg-light: #f9f9f9;
+        --bg-dark: #2E7D32;
+        --border-radius: 8px;
+        --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--bg-light);
+        color: var(--text-dark);
+        line-height: 1.6;
+    }
+
+    /* Sidebar styles */
+    .sidebar {
+        background-color: var(--bg-dark);
+        color: white;
+        min-height: 100vh;
+        padding: 20px;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar .nav-link {
+        color: rgba(255,255,255,0.8);
+        padding: 10px 15px;
+        margin-bottom: 5px;
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+    }
+
+    .sidebar .nav-link:hover {
+        color: white;
+        background-color: rgba(255,255,255,0.1);
+    }
+
+    .sidebar .nav-link.active {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .sidebar .nav-link i {
+        margin-right: 10px;
+        font-size: 18px;
+    }
+
+    /* Main content adjustments */
+    main {
+        background-color: var(--bg-light);
+        padding: 20px;
+    }
+
+    /* Stats Cards */
+    .stat-card {
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 15px;
+        transition: var(--transition);
+        border-left: 4px solid var(--primary-color);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+
+    /* Alert items */
+    .alert-item {
+        border-left: 3px solid var(--primary-color);
+        padding: 10px 15px;
+        margin-bottom: 5px;
+        background-color: white;
+        border-radius: var(--border-radius);
+    }
+
+    .alert-item.critical {
+        border-left-color: #f44336;
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .btn:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .btn-outline-primary {
+        background-color: transparent;
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .btn-outline-success {
+        background-color: transparent;
+        border: 1px solid var(--secondary-color);
+        color: var(--secondary-color);
+    }
+
+    .btn-outline-success:hover {
+        background-color: var(--secondary-color);
+        color: white;
+    }
+
+    .btn-outline-info {
+        background-color: transparent;
+        border: 1px solid var(--accent-color);
+        color: var(--accent-color);
+    }
+
+    .btn-outline-info:hover {
+        background-color: var(--accent-color);
+        color: var(--text-dark);
+    }
+
+    /* Cards */
+    .card {
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        transition: var(--transition);
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    /* Tables */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table th, .table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+
+    .table th {
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+        font-weight: 600;
+    }
+
+    .table tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    /* Progress bars */
+    .progress {
+        height: 24px;
+        border-radius: 12px;
+        background-color: #f0f0f0;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        background-color: var(--primary-color);
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    /* Quick actions */
+    .d-grid.gap-2 {
+        display: grid;
+        gap: 10px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
         .sidebar {
-            min-height: 100vh;
-            background-color: #343a40;
+            width: 100%;
+            min-height: auto;
+            position: relative;
         }
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.75);
+        
+        main {
+            margin-left: 0;
         }
-        .sidebar .nav-link:hover {
-            color: rgba(255, 255, 255, 1);
+        
+        .table {
+            display: block;
+            overflow-x: auto;
         }
-        .sidebar .nav-link.active {
-            color: white;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        .stat-card {
-            border-left: 4px solid #0d6efd;
-            transition: transform 0.2s;
-        }
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-        .alert-item {
-            border-left: 3px solid #0d6efd;
-        }
-        .alert-item.critical {
-            border-left-color: #dc3545;
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
     <div class="container-fluid">
@@ -89,24 +287,21 @@ $especies_populares = $especies_populares_result ? $especies_populares_result->f
               <!-- Sidebar -->
     <?php
     // Mostrar sidebar según el tipo de usuario
-    switch ($_SESSION['tipo_usuario']) {
-        case 'administrador':
-            include 'includes/sidebar_admin.php';
-            break;
-        case 'veterinario':
-            include 'includes/sidebar_veterinario.php';
-            break;
-        case 'empleado':
-            include 'includes/sidebar_investigador.php';
-            break;
-        // Agrega más casos según tus tipos de usuario
-        default:
-            include 'includes/sidebar.php';
-            break;
-    }
-    ?>  <!-- Sidebar -->
-
-            <?php include 'includes/sidebar_investigador.php'; ?>
+             switch ($_SESSION['tipo_usuario']) {
+                case 'Administrador':
+                    include 'includes/sidebar_admin.php';
+                    break;
+                case 'Veterinario':
+                    include 'includes/sidebar_veterinario.php';
+                    break;
+                case 'Investigador':
+                    include 'includes/sidebar_investigador.php';
+                    break;
+                default:
+                    include 'includes/sidebar.php';
+                    break;
+            }
+            ?> 
             <!-- Main content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
