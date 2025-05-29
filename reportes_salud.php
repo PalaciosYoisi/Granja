@@ -3,8 +3,8 @@ session_start();
 require_once 'conexion/conexion.php';
 
 // Verificar sesión
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: index.php");
+if (!isset($_SESSION['id_usuario'])) {
+    header("Location: iniciar_sesion.php");
     exit();
 }
 

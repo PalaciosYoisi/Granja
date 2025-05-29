@@ -3,8 +3,8 @@ session_start();
 require_once 'conexion/conexion.php';
 
 // Verificar sesión y rol
-if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'Administrador') {
-    header("Location: ../index.php");
+if (!isset($_SESSION['id_usuario']) || $_SESSION['tipo_usuario'] != 'Administrador') {
+    header("Location: iniciar_sesion.php");
     exit();
 }
 

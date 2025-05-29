@@ -2,7 +2,7 @@
 session_start();
 require_once 'conexion/conexion.php';
 
-if (!isset($_SESSION['usuario_id'])) {
+if (!isset($_SESSION['id_usuario'])) {
     header("Location: index.php");
     exit();
 }

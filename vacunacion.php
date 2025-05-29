@@ -3,8 +3,8 @@ session_start();
 require_once 'conexion/conexion.php';
 
 // Verificar sesión y rol
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: index.php");
+if (!isset($_SESSION['id_usuario'])) {
+    header("Location: iniciar_sesion.php");
     exit();
 }
 
@@ -36,11 +36,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_vacunacion'])
     $id_vacuna = $_POST['id_vacuna'];
     $fecha_aplicacion = $_POST['fecha_aplicacion'];
     $proxima_dosis = $_POST['proxima_dosis'];
+    $dosis = $_POST['dosis'];
+    $id_empleado = $_POST['id_empleado'];
     $observaciones = $_POST['observaciones'];
 
-    $stmt = $db->prepare("INSERT INTO vacunacion (id_animal, id_vacuna, fecha_aplicacion, proxima_dosis, observaciones) 
-                          VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("iisss", $id_animal, $id_vacuna, $fecha_aplicacion, $proxima_dosis, $observaciones);
+    $stmt = $db->prepare("INSERT INTO vacunacion (id_animal, id_vacuna, fecha_aplicacion, proxima_dosis, dosis, id_empleado, observaciones) 
+                          VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("iisssis", $id_animal, $id_vacuna, $fecha_aplicacion, $proxima_dosis, $dosis, $id_empleado, $observaciones);
     
     if ($stmt->execute()) {
         $_SESSION['mensaje'] = "Vacunación registrada correctamente";
@@ -455,6 +457,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_vacunacion'])
                             <label for="fecha_aplicacion" class="form-label">Fecha de Aplicación</label>
                             <input type="date" class="form-control" id="fecha_aplicacion" name="fecha_aplicacion" required value="<?php echo date('Y-m-d'); ?>">
                         </div>
+                        <!-- Agregar estos campos al formulario en el modal -->
+                        <div class="mb-3">
+                            <label for="dosis" class="form-label">Dosis</label>
+                            <select class="form-select" id="dosis" name="dosis" required>
+                                <option value="Primera">Primera</option>
+                                <option value="Segunda">Segunda</option>
+                                <option value="Refuerzo">Refuerzo</option>
+                                <option value="Anual">Anual</option>
+                            </select>
+                        </div>
+                        <input type="hidden" name="id_empleado" value="<?php echo isset($_SESSION['id_usuario']) ? htmlspecialchars($_SESSION['id_usuario'], ENT_QUOTES, 'UTF-8') : ''; ?>">
                         <div class="mb-3">
                             <label for="proxima_dosis" class="form-label">Próxima Dosis</label>
                             <input type="date" class="form-control" id="proxima_dosis" name="proxima_dosis" required>

@@ -3,7 +3,7 @@ session_start();
 require_once 'conexion/conexion.php';
 
 // Verificar sesión y rol
-if (!isset($_SESSION['usuario_id'])) {
+if (!isset($_SESSION['id_usuario'])) {
     header("Location: index.php");
     exit();
 }

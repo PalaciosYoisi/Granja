@@ -3,7 +3,7 @@ session_start();
 require_once 'conexion/conexion.php';
 
 // Verificar sesión y rol
-if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'Investigador') {
+if (!isset($_SESSION['idusuario']) || $_SESSION['tipo_usuario'] != 'Investigador') {
     header("Location: iniciar_sesion.php");
     exit();
 }
