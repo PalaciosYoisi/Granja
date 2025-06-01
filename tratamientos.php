@@ -190,17 +190,17 @@ body {
 
 .bg-success {
     background-color: #C8E6C9;
-    color: #2E7D32;
+    color:rgb(236, 242, 237);
 }
 
 .bg-danger {
     background-color: #FFCDD2;
-    color: #C62828;
+    color:rgb(247, 238, 238);
 }
 
 .bg-warning {
     background-color: #FFF9C4;
-    color: #F57F17;
+    color:rgb(255, 251, 248);
 }
 
 .action-btn {

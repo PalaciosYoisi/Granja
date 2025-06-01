@@ -124,7 +124,7 @@ body {
 }
 
 .alert-item.critical {
-    border-left-color: #C62828;
+    border-left-color:rgb(228, 99, 99);
 }
 
 .treatment-card {
@@ -185,18 +185,18 @@ body {
 }
 
 .bg-success {
-    background-color: #C8E6C9;
-    color: #2E7D32;
+    background-color:rgb(50, 214, 140);
+    color:rgb(238, 246, 238);
 }
 
 .bg-danger {
-    background-color: #FFCDD2;
-    color: #C62828;
+    background-color:rgb(234, 92, 92);
+    color:rgb(239, 230, 230);
 }
 
 .bg-warning {
-    background-color: #FFF9C4;
-    color: #F57F17;
+    background-color:rgb(7, 7, 6);
+    color:rgb(255, 252, 249);
 }
 
 .table {
@@ -272,7 +272,7 @@ body {
         overflow-x: auto;
     }
 }
-            </style>
+ </style>
 </head>
 <body>
     <div class="container-fluid">

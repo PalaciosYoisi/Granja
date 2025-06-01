@@ -1,6 +1,6 @@
 <?php
 session_start();
-$conexion = new mysqli("localhost", "root", "", "granja");
+$conexion = new mysqli("localhost", "root", "", "granja3");
 
 // Función para validar login
 function login($email, $password) {

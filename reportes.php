@@ -348,7 +348,7 @@ $plantas = $db->query("SELECT id_planta, nombre_comun FROM plantas ORDER BY nomb
     <!-- Sidebar -->
     <?php
     // Mostrar sidebar según el tipo de usuario
-            switch ($_SESSION['tipo_usuario']) {
+            switch ($_SESSION['tipo_usuario'] ?? '') {  
                 case 'Administrador':
                     include 'includes/sidebar_admin.php';
                     break;
@@ -666,11 +666,7 @@ $plantas = $db->query("SELECT id_planta, nombre_comun FROM plantas ORDER BY nomb
                         </div>
                     </div>
                     
-                    <div id="tratamiento-section">
-                        <h5 class="section-title">Tratamiento</h5>
-                        <div id="sin-tratamiento" class="alert alert-warning">
-                            No se ha registrado un tratamiento para este reporte.
-                        </div>
+                    
                         <div id="con-tratamiento" style="display: none;">
                             <div class="row">
                                 <div class="col-md-6">

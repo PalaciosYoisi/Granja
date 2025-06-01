@@ -2,7 +2,11 @@
 session_start();
 require_once 'conexion/conexion.php';
 
-
+// Verificar sesión y rol
+if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'Administrador') {
+    header("Location: index.php");
+    exit();
+}
 
 // Conexión a la base de datos
 $conexion = new Conexion();
@@ -25,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion']) && isset($_P
     $accion = $_POST['accion'];
     
     if ($accion == 'bloquear') {
-        $bloqueado_hasta = date('Y-m-d H:i:s', strtotime('+30 minutes'));
+        $bloqueado_hasta = date('Y-m-d H:i:s', strtotime('+3 minutes'));
         $db->query("INSERT INTO bloqueo_usuarios (id_usuario, intentos_fallidos, bloqueado_desde, bloqueado_hasta) 
                    VALUES ($id_usuario, 3, NOW(), '$bloqueado_hasta')
                    ON DUPLICATE KEY UPDATE intentos_fallidos = 3, bloqueado_desde = NOW(), bloqueado_hasta = '$bloqueado_hasta'");
@@ -34,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion']) && isset($_P
         $db->query("INSERT INTO alertas (categoria, mensaje, fecha) 
                    VALUES ('usuario', CONCAT('Usuario ID ', $id_usuario, ' bloqueado manualmente por el administrador.'), NOW())");
         
-        $_SESSION['mensaje'] = "Usuario bloqueado exitosamente por 30 minutos.";
+        $_SESSION['mensaje'] = "Usuario bloqueado exitosamente por 3 minutos.";
     } elseif ($accion == 'desbloquear') {
         $db->query("DELETE FROM bloqueo_usuarios WHERE id_usuario = $id_usuario");
         
@@ -43,6 +47,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion']) && isset($_P
                    VALUES ('usuario', CONCAT('Usuario ID ', $id_usuario, ' desbloqueado manualmente por el administrador.'), NOW())");
         
         $_SESSION['mensaje'] = "Usuario desbloqueado exitosamente.";
+    } elseif ($accion == 'eliminar') {
+        // Verificar que no sea el propio administrador
+        if ($id_usuario == $_SESSION['usuario_id']) {
+            $_SESSION['error'] = "No puedes eliminarte a ti mismo.";
+        } else {
+            // Eliminar registros relacionados primero
+            $db->query("DELETE FROM bloqueo_usuarios WHERE id_usuario = $id_usuario");
+            $db->query("DELETE FROM log_accesos WHERE id_usuario = $id_usuario");
+            
+            // Luego eliminar el usuario
+            $db->query("DELETE FROM usuarios WHERE id_usuario = $id_usuario");
+            
+            // Registrar alerta
+            $db->query("INSERT INTO alertas (categoria, mensaje, fecha) 
+                       VALUES ('usuario', CONCAT('Usuario ID ', $id_usuario, ' eliminado por el administrador.'), NOW())");
+            
+            $_SESSION['mensaje'] = "Usuario eliminado exitosamente.";
+        }
     }
     
     header("Location: usuarios.php");
@@ -57,14 +79,63 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['crear_usuario'])) {
     $tipo_usuario = $db->real_escape_string($_POST['tipo_usuario']);
     $clave = password_hash($db->real_escape_string($_POST['clave']), PASSWORD_DEFAULT);
     
-    $db->query("INSERT INTO usuarios (nombre, correo, telefono, tipo_usuario, clave) 
-               VALUES ('$nombre', '$correo', '$telefono', '$tipo_usuario', '$clave')");
+    // Verificar si el correo ya existe
+    $existe = $db->query("SELECT id_usuario FROM usuarios WHERE correo = '$correo'");
+    if ($existe && $existe->num_rows > 0) {
+        $_SESSION['error'] = "El correo electrónico ya está registrado.";
+    } else {
+        $db->query("INSERT INTO usuarios (nombre, correo, telefono, tipo_usuario, clave) 
+                   VALUES ('$nombre', '$correo', '$telefono', '$tipo_usuario', '$clave')");
+        
+        // Registrar alerta
+        $db->query("INSERT INTO alertas (categoria, mensaje, fecha) 
+                   VALUES ('usuario', CONCAT('Nuevo usuario creado por administrador: ', '$nombre', ' (', '$correo', ')'), NOW())");
+        
+        $_SESSION['mensaje'] = "Usuario creado exitosamente.";
+    }
     
-    // Registrar alerta
-    $db->query("INSERT INTO alertas (categoria, mensaje, fecha) 
-               VALUES ('usuario', CONCAT('Nuevo usuario creado por administrador: ', '$nombre', ' (', '$correo', ')'), NOW())");
+    header("Location: usuarios.php");
+    exit();
+}
+
+// Procesar edición de usuario
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['editar_usuario'])) {
+    $id_usuario = intval($_POST['id_usuario']);
+    $nombre = $db->real_escape_string($_POST['nombre']);
+    $correo = $db->real_escape_string($_POST['correo']);
+    $telefono = $db->real_escape_string($_POST['telefono']);
+    $tipo_usuario = $db->real_escape_string($_POST['tipo_usuario']);
+    $clave = !empty($_POST['clave']) ? password_hash($db->real_escape_string($_POST['clave']), PASSWORD_DEFAULT) : null;
     
-    $_SESSION['mensaje'] = "Usuario creado exitosamente.";
+    // Verificar si el correo ya existe en otro usuario
+    $existe = $db->query("SELECT id_usuario FROM usuarios WHERE correo = '$correo' AND id_usuario != $id_usuario");
+    if ($existe && $existe->num_rows > 0) {
+        $_SESSION['error'] = "El correo electrónico ya está registrado por otro usuario.";
+    } else {
+        if ($clave) {
+            $db->query("UPDATE usuarios SET 
+                       nombre = '$nombre',
+                       correo = '$correo',
+                       telefono = '$telefono',
+                       tipo_usuario = '$tipo_usuario',
+                       clave = '$clave'
+                       WHERE id_usuario = $id_usuario");
+        } else {
+            $db->query("UPDATE usuarios SET 
+                       nombre = '$nombre',
+                       correo = '$correo',
+                       telefono = '$telefono',
+                       tipo_usuario = '$tipo_usuario'
+                       WHERE id_usuario = $id_usuario");
+        }
+        
+        // Registrar alerta
+        $db->query("INSERT INTO alertas (categoria, mensaje, fecha) 
+                   VALUES ('usuario', CONCAT('Usuario ID ', $id_usuario, ' actualizado por el administrador.'), NOW())");
+        
+        $_SESSION['mensaje'] = "Usuario actualizado exitosamente.";
+    }
+    
     header("Location: usuarios.php");
     exit();
 }
@@ -208,6 +279,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['crear_usuario'])) {
         .stats-card .text-danger {
             color: var(--danger-color) !important;
         }
+        
+        .alert-danger {
+            background-color: rgba(231, 74, 59, 0.1);
+            border-color: rgba(231, 74, 59, 0.2);
+            color: var(--danger-color);
+        }
     </style>
 </head>
 <body>
@@ -224,11 +301,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['crear_usuario'])) {
                 </div>
                 
                 <?php if (isset($_SESSION['mensaje'])): ?>
-                    <div class="alert alert-success alert-dismissible fade show animate__animated animate__fadeIn" role="alert">
+                    <div class="alert alert-success alert-dismissible fade show animate_animated animate_fadeIn" role="alert">
                         <?php echo $_SESSION['mensaje']; ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <?php unset($_SESSION['mensaje']); ?>
+                <?php endif; ?>
+                
+                <?php if (isset($_SESSION['error'])): ?>
+                    <div class="alert alert-danger alert-dismissible fade show animate_animated animate_fadeIn" role="alert">
+                        <?php echo $_SESSION['error']; ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <?php unset($_SESSION['error']); ?>
                 <?php endif; ?>
             </div>
         </div>
@@ -325,7 +410,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['crear_usuario'])) {
                         <li><a class="dropdown-item" href="#">Exportar a Excel</a></li>
                         <li><a class="dropdown-item" href="#">Imprimir Lista</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Actualizar</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="location.reload()">Actualizar</a></li>
                     </ul>
                 </div>
             </div>
@@ -433,10 +518,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['crear_usuario'])) {
                                                 <i class="bi bi-pencil"></i>
                                             </button>
                                             
-                                            <button class="btn btn-sm btn-danger" 
-                                                    onclick="confirmarEliminar(<?php echo $usuario['id_usuario']; ?>, '<?php echo addslashes($usuario['nombre']); ?>')">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
+                                            <?php if ($usuario['id_usuario'] != $_SESSION['usuario_id']): ?>
+                                                <button class="btn btn-sm btn-danger" 
+                                                        onclick="confirmarEliminar(<?php echo $usuario['id_usuario']; ?>, '<?php echo addslashes($usuario['nombre']); ?>')">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            <?php else: ?>
+                                                <button class="btn btn-sm btn-danger" disabled title="No puedes eliminarte a ti mismo">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            <?php endif; ?>
                                         </div>
                                     </td>
                                 </tr>
@@ -452,7 +543,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['crear_usuario'])) {
     <div class="modal fade" id="nuevoUsuarioModal" tabindex="-1" aria-labelledby="nuevoUsuarioModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form method="POST" action="">
+                <form method="POST" action="" onsubmit="return validarNuevoUsuario()">
                     <div class="modal-header bg-primary text-white">
                         <h5 class="modal-title" id="nuevoUsuarioModalLabel">
                             <i class="bi bi-person-plus me-1"></i> Crear Nuevo Usuario
@@ -483,11 +574,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['crear_usuario'])) {
                         </div>
                         <div class="mb-3">
                             <label for="clave" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="clave" name="clave" required>
+                            <input type="password" class="form-control" id="clave" name="clave" required minlength="6">
                         </div>
                         <div class="mb-3">
                             <label for="confirmar_clave" class="form-label">Confirmar Contraseña</label>
-                            <input type="password" class="form-control" id="confirmar_clave" name="confirmar_clave" required>
+                            <input type="password" class="form-control" id="confirmar_clave" name="confirmar_clave" required minlength="6">
+                            <div id="claveError" class="text-danger small d-none">Las contraseñas no coinciden</div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -503,7 +595,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['crear_usuario'])) {
     <div class="modal fade" id="editarUsuarioModal" tabindex="-1" aria-labelledby="editarUsuarioModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form method="POST" action="">
+                <form method="POST" action="" onsubmit="return validarEditarUsuario()">
                     <div class="modal-header bg-primary text-white">
                         <h5 class="modal-title" id="editarUsuarioModalLabel">
                             <i class="bi bi-person-gear me-1"></i> Editar Usuario
@@ -537,6 +629,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['crear_usuario'])) {
                             <label for="edit_clave" class="form-label">Nueva Contraseña (opcional)</label>
                             <input type="password" class="form-control" id="edit_clave" name="clave">
                             <div class="form-text">Dejar en blanco para mantener la contraseña actual</div>
+                            <div id="edit_claveError" class="text-danger small d-none">Las contraseñas no coinciden</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_confirmar_clave" class="form-label">Confirmar Nueva Contraseña</label>
+                            <input type="password" class="form-control" id="edit_confirmar_clave">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -576,6 +673,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['crear_usuario'])) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Función para editar usuario
         function editarUsuario(id, nombre, correo, telefono, tipo_usuario) {
             document.getElementById('edit_id_usuario').value = id;
             document.getElementById('edit_nombre').value = nombre;
@@ -583,10 +681,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['crear_usuario'])) {
             document.getElementById('edit_telefono').value = telefono;
             document.getElementById('edit_tipo_usuario').value = tipo_usuario;
             
+            // Limpiar campos de contraseña
+            document.getElementById('edit_clave').value = '';
+            document.getElementById('edit_confirmar_clave').value = '';
+            document.getElementById('edit_claveError').classList.add('d-none');
+            
             var modal = new bootstrap.Modal(document.getElementById('editarUsuarioModal'));
             modal.show();
         }
         
+        // Función para confirmar eliminación
         function confirmarEliminar(id, nombre) {
             document.getElementById('delete_id_usuario').value = id;
             document.getElementById('delete_nombre_usuario').textContent = nombre;
@@ -595,14 +699,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['crear_usuario'])) {
             modal.show();
         }
         
-        // Validación de contraseña al crear usuario
-        document.querySelector('form[action=""]').addEventListener('submit', function(e) {
+        // Validación para nuevo usuario
+        function validarNuevoUsuario() {
             const clave = document.getElementById('clave').value;
             const confirmar_clave = document.getElementById('confirmar_clave').value;
+            const claveError = document.getElementById('claveError');
             
             if (clave !== confirmar_clave) {
-                e.preventDefault();
-                alert('Las contraseñas no coinciden');
+                claveError.classList.remove('d-none');
+                return false;
+            } else {
+                claveError.classList.add('d-none');
+                return true;
+            }
+        }
+        
+        // Validación para editar usuario
+        function validarEditarUsuario() {
+            const clave = document.getElementById('edit_clave').value;
+            const confirmar_clave = document.getElementById('edit_confirmar_clave').value;
+            const claveError = document.getElementById('edit_claveError');
+            
+            // Solo validar si se está cambiando la contraseña
+            if (clave && clave !== confirmar_clave) {
+                claveError.classList.remove('d-none');
+                return false;
+            } else {
+                claveError.classList.add('d-none');
+                return true;
+            }
+        }
+        
+        // Validación en tiempo real para nuevo usuario
+        document.getElementById('confirmar_clave').addEventListener('input', function() {
+            const clave = document.getElementById('clave').value;
+            const confirmar_clave = this.value;
+            const claveError = document.getElementById('claveError');
+            
+            if (clave && confirmar_clave && clave !== confirmar_clave) {
+                claveError.classList.remove('d-none');
+            } else {
+                claveError.classList.add('d-none');
+            }
+        });
+        
+        // Validación en tiempo real para editar usuario
+        document.getElementById('edit_confirmar_clave').addEventListener('input', function() {
+            const clave = document.getElementById('edit_clave').value;
+            const confirmar_clave = this.value;
+            const claveError = document.getElementById('edit_claveError');
+            
+            if (clave && confirmar_clave && clave !== confirmar_clave) {
+                claveError.classList.remove('d-none');
+            } else {
+                claveError.classList.add('d-none');
             }
         });
     </script>

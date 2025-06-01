@@ -43,6 +43,12 @@
                             <i class="bi bi-people me-2"></i>Usuarios
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                             <a href="auditorias.php" class="nav-link">
+                            <i class="fas fa-clipboard-list"></i> Auditorías</a>
+                    </li>
+
                     <li class="nav-item mt-4">
                         <a class="nav-link text-danger" href="conexion/logout2.php">
                             <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
